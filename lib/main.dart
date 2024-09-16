@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ourhands/views/auth/restore_password.dart';
-
+import 'package:ourhands/views/home/home_page.dart';
 import 'splash_screen.dart';
 
 void main() {
@@ -21,10 +22,26 @@ class MyApp extends StatelessWidget {
           title: 'HARLEY',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-           // colorScheme: ColorScheme.fromSeed(seedColor: AppColors.redtext),
-            useMaterial3: true,
+            scaffoldBackgroundColor: Colors.white,
+            useMaterial3: false,
+            fontFamily: 'Cairo',
+            appBarTheme: const AppBarTheme(
+              centerTitle: true,
+              titleTextStyle: TextStyle(
+                color: Colors.black,
+                fontFamily: 'Cairo',
+                fontWeight: FontWeight.w400,
+                fontSize: 20,
+              ),
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+              ),
+              color: Colors.white,
+              elevation: 0,
+            ),
           ),
-          home:  PasswordRecoveryPage(), 
+
+          home:  HomePage(),
         );
       },
     );
