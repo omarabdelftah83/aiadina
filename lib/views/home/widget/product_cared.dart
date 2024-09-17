@@ -88,48 +88,78 @@ class ProductCard extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-              side: const BorderSide(color: Colors.grey, width: 0.5)),
+            borderRadius: BorderRadius.circular(18),
+            side: const BorderSide(color: Colors.grey, width: 0.5),
+          ),
           content: Container(
             height: 380,
             width: 340,
-            child: Column(
+            child: Stack(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                Column(
                   children: [
-                    const Align(
-                        alignment: Alignment.topRight,
-                        child: CustomText(
-                          text: 'التعليقات',
-                          textColor: Colors.green,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        )),
-                    IconButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const Align(
+                          alignment: Alignment.topRight,
+                          child: CustomText(
+                            text: 'التعليقات',
+                            textColor: Colors.green,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          icon: const Icon(Icons.arrow_forward_ios_rounded),
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: 15,
+                        itemBuilder: (context, index) {
+                          return const Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    CustomText(text: 'نهى محمود'),
+                                    // يمكنك استبدال النص بأسماء مختلفة
+                                    Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: CircleAvatar(
+                                        radius: 15,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                CustomText(
+                                    text:
+                                        'الكيكة كانت لذيذة جداً وطازجة، شكراً على الخدمة الممتازة',fontSize: 12,)
+                              ],
+                            ),
+                          );
                         },
-                        icon: const Icon(Icons.arrow_forward_ios_rounded)),
-                  ],
-                ),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    CustomText(text: 'نهى محمود'),
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: CircleAvatar(
-                        radius: 15,
                       ),
                     ),
                   ],
                 ),
-                const Spacer(),
-                CustomTextField(
-                  controller: _commentController,
-                  maxLines: 3,
-                  hintText: '...اكتب تعليق',
+                Positioned(
+                  bottom: 20,
+                  left: 0,
+                  right: 0,
+                  child: CustomTextField(
+                    prefixIcon: Icon(Icons.arrow_left),
+                    controller: _commentController,
+                    maxLines: 3,
+                    hintText: '...اكتب تعليق',
+                  ),
                 ),
               ],
             ),

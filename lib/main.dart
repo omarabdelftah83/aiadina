@@ -4,6 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ourhands/views/auth/restore_password.dart';
 import 'package:ourhands/views/home/home_page.dart';
+import 'package:ourhands/views/profile/ads_page.dart';
+import 'package:ourhands/views/profile/profile_page.dart';
+import 'package:ourhands/views/profile/page_loading.dart';
 import 'splash_screen.dart';
 
 void main() {
@@ -41,7 +44,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
 
-          home:  HomePage(),
+          home:  AdsPage(),
         );
       },
     );
