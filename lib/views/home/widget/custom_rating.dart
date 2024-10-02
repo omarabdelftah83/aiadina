@@ -6,11 +6,11 @@ class RatingWidget extends StatelessWidget {
   final double size;
 
   const RatingWidget({
-    Key? key,
+    super.key,
     required this.rating,
     required this.onRatingUpdate,
     required this.size,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

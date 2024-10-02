@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:ourhands/widgets/app_text/AppText.dart';
 import 'package:ourhands/widgets/appar/custom_app_padding.dart';
 import 'package:ourhands/widgets/custom/custom_button.dart';
+
+import '../ads/add_products_alert.dart';
 
 class PageLoading extends StatelessWidget {
   const PageLoading({super.key});
@@ -20,7 +23,7 @@ class PageLoading extends StatelessWidget {
               ),
               InkWell(
                   onTap: () {
-                    _showCommentDialog(context);
+                    showCommentDialog(context);
                   },
                   child: const CustomText(
                     text: 'تطبيق ايادينا اول خطوة للنجاح',
@@ -32,8 +35,8 @@ class PageLoading extends StatelessWidget {
     );
   }
 
-  void _showCommentDialog(BuildContext context) {
-    final TextEditingController _commentController = TextEditingController();
+  void showCommentDialog(BuildContext context) {
+    final TextEditingController commentController = TextEditingController();
 
     showDialog(
       context: context,
@@ -43,7 +46,7 @@ class PageLoading extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             side: const BorderSide(color: Colors.grey, width: 0.5),
           ),
-          content: Container(
+          content: SizedBox(
             height: 280,
             width: 340,
             child: Column(
@@ -137,13 +140,16 @@ class PageLoading extends StatelessWidget {
                     )
                   ],
                 ),
-                Align(
+                const Align(
                   alignment: Alignment.topRight,
                   child: CustomText(
                     text: 'لكسب مزيد من العملاء و رفع التقييم',fontSize: 14,textColor: Colors.green,),
                 ),
-                SizedBox(height: 20,),
-                CustomButton(text: 'اضف اعلان', onTap: (){},width: 310,height: 50,)
+                const SizedBox(height: 20,),
+                CustomButton(text: 'اضف اعلان', onTap: (){
+              Get.back();
+                 addAds(context);
+                },width: 310,height: 50,)
               ],
             ),
           ),

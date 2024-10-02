@@ -18,4 +18,15 @@ class Strings {
   static const String enterVerificationCode = "ادخل رمز التحقق المرسل الى هاتفك";
   static const String resend = "اعادة الارسال";
   static const String resendAfter = "اعادة الارسال بعد";
+  static const String alerText = "تطبيق ايادينا اول تطبيق هاندميد فى مصر";
+  static const String serachResult = "نتائج البحث";
+  static const String confirmLogOut = "هل انت متأكد انك تريد تسجيل الخروج ؟";
+  static const String logOut = "تسجيل الخروج";
+  static const String cancel = "الغاء";
+  static const String addproductPhoto = "اضف صور المنتج";
+  static const String nameProduct = "اسم المنتج";
+  static const String location = 'المدينه';
+  static const String subLocation = 'الحي';
+  static const String newPassword = 'كلمة المرور الجديدة';
+  static const String verify = "تحقق";
 }

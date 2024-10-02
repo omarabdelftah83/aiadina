@@ -61,7 +61,6 @@ class _DropDownCustomTextfailedState extends State<DropDownCustomTextfailed> {
               decoration: InputDecoration(
                 hintText: _selectedDropdownItem ?? widget.hintText,
                 hintStyle: const TextStyle(color: Colors.grey),
-                //prefixIcon: widget.prefixIcon, // Prefix icon remains unchanged
                 prefixIcon: Icon(
                   _isDropdownOpen
                       ? Icons.arrow_drop_up
@@ -71,7 +70,6 @@ class _DropDownCustomTextfailedState extends State<DropDownCustomTextfailed> {
                   borderRadius: BorderRadius.circular(10.0),
                   borderSide: BorderSide(
                     color: _isDropdownOpen ? Colors.green : Colors.grey,
-                    // Change to green when open
                     width: 1.0,
                   ),
                 ),

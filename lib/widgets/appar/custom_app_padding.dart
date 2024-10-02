@@ -7,7 +7,7 @@ class CustomPaddingApp extends StatelessWidget {
 
   const CustomPaddingApp(
       {super.key,
-        this.vertical = 70,
+        this.vertical = 38,
         this.horizontal = 16,
         required this.child});
 

@@ -19,9 +19,9 @@ class AdsPage extends StatelessWidget {
               Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                SizedBox(width: 50,),
+                const SizedBox(width: 50,),
 
-                  CustomText(
+                  const CustomText(
                     textColor: Colors.green,
                     text: 'اضف اعلان',
                     fontSize: 26,

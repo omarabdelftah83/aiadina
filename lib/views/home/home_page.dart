@@ -1,132 +1,157 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:ourhands/controllers/home_controller/get_search_controller.dart';
+import 'package:ourhands/views/ads/ads_page.dart';
 import 'package:ourhands/views/home/search_result_page.dart';
+import 'package:ourhands/views/profile/profile_page.dart';
+import 'package:ourhands/widgets/alert_dialog.dart';
 import 'package:ourhands/widgets/app_text/AppText.dart';
 import 'package:ourhands/widgets/appar/custom_app_padding.dart';
 import 'package:ourhands/widgets/custom/custom_button.dart';
 import 'package:ourhands/widgets/text_failed/drop_down_custom_textfailed.dart';
+import '../../Bindings/service_locator.dart';
+import '../../controllers/home_controller/search_controller.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  HomePage({super.key});
+  final searchController = getIt<SearchHomeController>();
+  final HomeController _controller = Get.put(HomeController());
+
 
   @override
   Widget build(BuildContext context) {
+    final GetStorage box = GetStorage();
+    bool hasShownDialog = box.read<bool>('hasShownDialogeask') ?? false;
+    if (!hasShownDialog) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showCustomDialog(context);
+      });
+      box.write('hasShownDialogeask', true);
+    }
+
     return Scaffold(
       body: CustomPaddingApp(
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          child: Obx(() {
+            if (_controller.isLoading.value) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                _buildHeader(),
+                SizedBox(height: 50.h),
+                const CustomText(
+                  text: 'بتدور على ايه؟',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                ),
+                SizedBox(height: 10.h),
+                DropDownCustomTextfailed(
+                  hintText: 'اختر نوع الخدمة',
+                  dropdownItems: _controller.jobs.where((job) => job != null).cast<String>().toList(), 
+                  onDropdownChanged: (selectedItem) {
+                    _controller.updateSelectedJob(selectedItem ?? '');
+                  },
+                ),
+                SizedBox(height: 50.h),
+                const CustomText(
+                  text: 'محافظة ايه؟',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                ),
+                SizedBox(height: 10.h),
+                DropDownCustomTextfailed(
+                  hintText: 'اختر المحافظة',
+                  dropdownItems: _controller.cities.where((city) => city != null).cast<String>().toList(), 
+                  onDropdownChanged: (selectedItem) {
+                    _controller.updateSelectedCity(selectedItem ?? '');
+                  },
+                ),
+                SizedBox(height: 50.h),
+
+                const CustomText(
+                  text: 'حى ايه ؟',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                ),
+                SizedBox(height: 10.h),
+                DropDownCustomTextfailed(
+                  hintText: 'اختر الحي',
+                  dropdownItems: _controller.locations.where((location) => location != null).cast<String>().toList(), 
+                  onDropdownChanged: (selectedItem) {
+                    _controller.updateSelectedLocation(selectedItem ?? '');
+                  },
+                ),
+                SizedBox(height: 127.h),
+                CustomButton(
+  text: 'متابعه',
+  onTap: () async {
+    final selectedJob = _controller.selectedJob.value;
+    final selectedCity = _controller.selectedCity.value;
+    final selectedLocation = _controller.selectedLocation.value;
+
+    print("selectedJob: $selectedJob, selectedCity: $selectedCity, selectedLocation: $selectedLocation");
+
+    // Await the fetch results before navigating
+    await searchController.fetchSearchResults(selectedCity, selectedLocation, selectedJob);
+    
+    // After fetching, check if results are available
+    if (searchController.searchResults.isNotEmpty) {
+      Get.to(() => const SearchResultPage());
+    } else {
+      // Optionally, show a message if no results were found
+      Get.snackbar('No Results', 'No results found for your search.', snackPosition: SnackPosition.BOTTOM);
+    }
+  },
+  height: 45,
+),
+
+
+                SizedBox(height: 30.h),
+              ],
+            );
+          }),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Row(
+      children: [
+        InkWell(
+          onTap: () {
+            Get.to(const AdsPage());
+          },
+          child: const CustomText(
+            textColor: Colors.green,
+            text: 'اضف اعلان',
+            fontSize: 18,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        const Spacer(),
+        InkWell(
+          onTap: () {
+            Get.to(const ProfilePage());
+          },
+          child: Row(
             children: [
-              Row(
-                children: [
-                  const Row(
-                    children: [
-                      CustomText(
-                        textColor: Colors.green,
-                        text: 'اضف اعلان',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Row(
-                    children: [
-                      const CustomText(
-                        text: 'اهلا مريم',
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      SizedBox(
-                        width: 10.w,
-                      ),
-                      const CircleAvatar(),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 50.h,
-              ),
               const CustomText(
-                text: 'بتدور على ايه؟',
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
+                text: 'اهلا مريم',
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
               ),
-              SizedBox(
-                height: 10.h,
-              ),
-              DropDownCustomTextfailed(
-                hintText: ' ',
-                dropdownItems: const [
-                  'اكل بيتي',
-                  'شنط هاند ميد',
-                  'تورت و حلويات',
-                  'ميكاب ارتست',
-                  'تطريز',
-                ],
-                onDropdownChanged: (selectedItem) {},
-              ),
-              SizedBox(
-                height: 50.h,
-              ),
-              const CustomText(
-                text: 'محافظة ايه؟',
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-              ),
-              SizedBox(
-                height: 10.h,
-              ),
-              DropDownCustomTextfailed(
-                hintText: ' ',
-                dropdownItems: const [
-                  'القاهرة',
-                  'الجيزة',
-                  '6 اكتوبر',
-                  'الاسكندرية',
-                  'القليوبية',
-                ],
-                onDropdownChanged: (selectedItem) {},
-              ),
-              SizedBox(
-                height: 50.h,
-              ),
-              const CustomText(
-                text: 'حى ايه ؟',
-                fontSize: 15,
-                fontWeight: FontWeight.w400,
-              ),
-              SizedBox(
-                height: 10.h,
-              ),
-              DropDownCustomTextfailed(
-                hintText: ' ',
-                dropdownItems: const [
-                  'الحى الاول',
-                  'الحى الثانى',
-                  'الحى الثالث',
-                  'الحى الرابع',
-                  'التوسعات الشمالية',
-                ],
-                onDropdownChanged: (selectedItem) {},
-              ),
-              SizedBox(height: 127.h),
-              CustomButton(
-                text: 'متابعه',
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SearchResultPage()));
-                },
-                height: 45,
-              ),
-              SizedBox(height: 30.h),
+              SizedBox(width: 10.w),
+              const CircleAvatar(),
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ourhands/utils/colors.dart';
 import 'package:ourhands/views/profile/widget/edit_profile_items.dart';
 import 'package:ourhands/widgets/app_text/AppText.dart';
 import 'package:ourhands/widgets/appar/custom_app_padding.dart';
+
+import '../../widgets/alert_dialog.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -105,8 +108,10 @@ class ProfilePage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  const CustomText(text: 'تسجيل الخروج',textColor: Colors.red,),
-                  IconButton(onPressed: () {}, icon: const Icon(Icons.logout,color: Colors.red,)),
+                   CustomText(text: 'تسجيل الخروج',textColor: AppColors.redColor,),
+                  IconButton(onPressed: () {
+                    logOutDialog(context);  
+                  }, icon:  Icon(Icons.logout,color: AppColors.redColor,)),
                 ],
               ),
 

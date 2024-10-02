@@ -27,10 +27,22 @@ class FontStyles {
      fontFamily: 'Cairo',
     color: AppColors.actionButton,
   );
-
+  static  TextStyle font18Weightred = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+     fontFamily: 'Cairo',
+    color: AppColors.redColor,
+  );
   static  TextStyle font16Weight400Text = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w400,
+     fontFamily: 'Cairo',
+    color: AppColors.textColor,
+  );
+
+  static  TextStyle font16WeightBoldText = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
      fontFamily: 'Cairo',
     color: AppColors.textColor,
   );

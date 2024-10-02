@@ -47,70 +47,79 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 15.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Align(
-            alignment: Alignment.topRight,
-            child: Text(
-              widget.label,
-              style: FontStyles.font14Weight400RightAligned.copyWith(
-                color: AppColors.textColor,
-              ),
-              textAlign: TextAlign.right,
-            ),
-          ),
-          SizedBox(height: 10.h),
-          SizedBox(
-            width: widget.width,
-            height: widget.height,
-            child: Directionality(
-              textDirection: TextDirection.rtl,
-              child: TextFormField(
-                controller: widget.controller,
-                keyboardType: widget.textInputType,
-                obscureText: _obscureText,
-                enabled: widget.enabled,
-                decoration: InputDecoration(
-                  hintText: widget.hintText,
-                  suffixIcon: widget.obSecureText
-                      ? IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _obscureText = !_obscureText;
-                            });
-                          },
-                          icon: Icon(
-                            _obscureText
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                            color: AppColors.iconeye,
-                          ),
-                        )
-                      : null,
-                  isDense: true,
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(widget.borderRadius),
-                    borderSide: BorderSide(
-                      width: 2,
-                      color: AppColors.actionButton,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.iconeye),
-                    borderRadius: BorderRadius.circular(widget.borderRadius),
-                  ),
-                  errorStyle: const TextStyle(color: Colors.red),
-                ),
-                validator: widget.validator,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+Widget build(BuildContext context) {
+  double textFieldHeight = widget.height; // Initial height
+
+  if (widget.validator != null) {
+    final String? errorText = widget.validator!(widget.controller.text);
+    if (errorText != null && errorText.isNotEmpty) {
+      textFieldHeight = widget.height + 20.0; // Increase height if there's an error
+    }
   }
+
+  return Padding(
+    padding: EdgeInsets.symmetric(vertical: 15.h),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Align(
+          alignment: Alignment.topRight,
+          child: Text(
+            widget.label,
+            style: FontStyles.font14Weight400RightAligned.copyWith(
+              color: AppColors.textColor,
+            ),
+            textAlign: TextAlign.right,
+          ),
+        ),
+        SizedBox(height: 10.h),
+        SizedBox(
+          width: widget.width,
+          height: textFieldHeight,
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: TextFormField(
+              controller: widget.controller,
+              keyboardType: widget.textInputType,
+              obscureText: _obscureText,
+              enabled: widget.enabled,
+              decoration: InputDecoration(
+                hintText: widget.hintText,
+                suffixIcon: widget.obSecureText
+                    ? IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _obscureText = !_obscureText;
+                          });
+                        },
+                        icon: Icon(
+                          _obscureText
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: AppColors.iconeye,
+                        ),
+                      )
+                    : null,
+                isDense: true,
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(widget.borderRadius),
+                  borderSide: BorderSide(
+                    width: 2,
+                    color: AppColors.actionButton,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: AppColors.iconeye),
+                  borderRadius: BorderRadius.circular(widget.borderRadius),
+                ),
+                errorStyle: const TextStyle(color: Colors.red),
+              ),
+              validator: widget.validator,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
 }
