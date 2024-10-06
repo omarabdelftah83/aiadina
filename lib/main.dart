@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 import 'package:ourhands/utils/colors.dart';
 import 'Bindings/service_locator.dart';
 import 'controllers/home_controller/get_search_controller.dart';
+import 'controllers/home_controller/search_controller.dart';
 import 'helpers/cache_helper.dart';
+import 'services/result of search.dart';
 import 'splash_screen.dart';
 
 
@@ -14,6 +16,8 @@ void main() async{
   await CacheHelper.init();
   getIt.registerLazySingleton<HomeController>(() => HomeController());
   setupDependencyInjection();
+   Get.lazyPut(() => SearchService()); 
+  Get.lazyPut(() => SearchHomeController(Get.find<SearchService>()));
   runApp(const MyApp());
 }
 

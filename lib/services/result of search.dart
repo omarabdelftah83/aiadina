@@ -19,7 +19,6 @@ class SearchService {
         'Content-Type': 'application/json',
       };
 
-      // Updated to include query parameters for city, location, and job
       var response = await http.get(
         Uri.parse('$searchUrl?city=$city&location=$location&job=$job'),
         headers: headers,

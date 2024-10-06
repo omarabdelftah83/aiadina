@@ -87,28 +87,22 @@ class HomePage extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: 127.h),
-                CustomButton(
+               CustomButton(
   text: 'متابعه',
-  onTap: () async {
+  onTap: () {
     final selectedJob = _controller.selectedJob.value;
     final selectedCity = _controller.selectedCity.value;
     final selectedLocation = _controller.selectedLocation.value;
 
-    print("selectedJob: $selectedJob, selectedCity: $selectedCity, selectedLocation: $selectedLocation");
-
-    // Await the fetch results before navigating
-    await searchController.fetchSearchResults(selectedCity, selectedLocation, selectedJob);
-    
-    // After fetching, check if results are available
-    if (searchController.searchResults.isNotEmpty) {
-      Get.to(() => const SearchResultPage());
-    } else {
-      // Optionally, show a message if no results were found
-      Get.snackbar('No Results', 'No results found for your search.', snackPosition: SnackPosition.BOTTOM);
-    }
+    Get.to(() => SearchResultPage(
+      selectedCity: selectedCity,
+      selectedLocation: selectedLocation,
+      selectedJob: selectedJob,
+    ));
   },
   height: 45,
 ),
+
 
 
                 SizedBox(height: 30.h),

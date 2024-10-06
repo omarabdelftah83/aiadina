@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lottie/lottie.dart';
 import 'package:ourhands/models/search_response_model.dart';
 import 'package:ourhands/views/home/seller_page.dart';
 import 'package:ourhands/widgets/app_text/AppText.dart';
+
+import '../../../utils/const.dart';
+import '../../../utils/images.dart';
+import 'user_posts.dart';
 
 class CustomCaredSearchResult extends StatelessWidget {
   final UserData userData;
@@ -38,29 +43,69 @@ class CustomCaredSearchResult extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        SizedBox(width: 70.w),
-                        CustomText(
-                          text: userData.id ?? '0123456789',
-                          textColor: Colors.grey,
-                        ),
-                      ],
+                    Expanded(
+                      child: Row(
+                        children: [
+                          SizedBox(width: 70.w),
+                          Flexible(
+                            child: CustomText(
+                              text: (userData.posts != null &&
+                                      userData.posts!.isNotEmpty &&
+                                      userData.posts![0].user != null)
+                                  ? userData.posts![0].user!.phone ?? '0123456789'
+                                  : 'لا يوجد رقم هاتف متاح',
+                              textColor: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     Row(
                       children: [
                         CustomText(
-                          text: userData.city ?? 'Unknown City',
+                          text: (userData.posts != null &&
+                                  userData.posts!.isNotEmpty &&
+                                  userData.posts![0].user != null)
+                              ? userData.posts![0].user!.name ?? 'مستخدم غير معروف'
+                              : 'لا يوجد اسم مستخدم متاح',
                           fontSize: screenWidth * 0.035,
                           fontWeight: FontWeight.w500,
                         ),
                         SizedBox(width: screenWidth * 0.02),
-                        CircleAvatar(
-                          radius: screenWidth * 0.05,
-                          backgroundImage: userData.images!.isNotEmpty
-                              ? NetworkImage(userData.images![0])
-                              : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
-                        ),
+                     CircleAvatar(
+  radius: screenWidth * 0.05,
+  backgroundColor: Colors.grey[200],
+  child: userData.images != null && userData.images!.isNotEmpty
+      ? ClipOval(
+          child: Image.network(
+            userData.images![0],
+            fit: BoxFit.cover,
+            width: 100, // Adjust as necessary
+            height: 100, // Adjust as necessary
+            errorBuilder: (context, error, stackTrace) {
+              return Center(
+                child: Lottie.asset(
+                  AssetImages.noImage,
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                ),
+              );
+            },
+          ),
+        )
+      : Center(
+          child: Lottie.asset(
+            AssetImages.noImage,
+            width: 60,
+            height: 60,
+            fit: BoxFit.cover,
+          ),
+        ),
+),
+
+
+
                       ],
                     ),
                   ],
@@ -72,7 +117,7 @@ class CustomCaredSearchResult extends StatelessWidget {
                     Row(
                       children: [
                         CustomText(
-                          text: userData.location ?? 'Location not provided',
+                          text: userData.location ?? 'الموقع غير متوفر',
                           textColor: Colors.grey,
                         ),
                         IconButton(
@@ -84,65 +129,32 @@ class CustomCaredSearchResult extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Row(
-                      children: [
-                        CustomText(
-                          text: userData.jobs!.isNotEmpty
-                              ? userData.jobs!.join(', ')
-                              : 'No job listed',
-                          textColor: Colors.grey,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Image.asset('assets/images/mdi_cake.png'),
-                        ),
-                      ],
+                    Flexible(
+                      child: Row(
+                        children: [
+                          CustomText(
+                            text: userData.jobs != null && userData.jobs!.isNotEmpty
+                                ? userData.jobs!.join(', ')
+                                : 'لا توجد وظيفة مدرجة',
+                            textColor: Colors.grey,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset('assets/images/mdi_cake.png'),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
                 SizedBox(height: 20.h),
-                const CustomText(text: 'Some previous works'),
-                SizedBox(height: 10.h),
-                Container(
-                  height: 70,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: userData.images!.length,
-                    itemBuilder: (context, index) {
-                      String imageUrl = userData.images!.isNotEmpty
-                          ? userData.images![index]
-                          : 'assets/images/placeholder.png';
-
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
-                        child: SizedBox(
-                          width: 80.w,
-                          height: 120.h,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: 1.0,
-                              ),
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: Image.network(
-                                imageUrl,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) => Image.asset(
-                                  'assets/images/placeholder.png',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                CustomText(
+                  text: 'بعض الأعمال السابقة لـ ${(userData.posts != null && userData.posts!.isNotEmpty && userData.posts![0].user != null) 
+                      ? userData.posts![0].user!.name ?? 'هذا المستخدم'
+                      : 'هذا المستخدم'}',
                 ),
+                SizedBox(height: 10.h),
+             UserPosts(posts: userData.posts ?? [],)
               ],
             ),
           ),
@@ -150,4 +162,4 @@ class CustomCaredSearchResult extends StatelessWidget {
       ),
     );
   }
-}
+} 
