@@ -62,6 +62,7 @@ dependencies:
   lottie: ^3.1.2
   get_it: ^8.0.0
   sms_autofill: ^2.4.0
+  timeago: ^3.7.0
 
 dev_dependencies:
   flutter_test:

@@ -4,8 +4,7 @@ import 'package:get/get.dart';
 import 'package:ourhands/utils/font_styles.dart';
 import 'package:ourhands/views/home/widget/custom_cared_search_result.dart';
 import 'package:ourhands/widgets/appar/custom_app_padding.dart';
-import 'package:lottie/lottie.dart'; // Import Lottie
-import '../../Bindings/service_locator.dart';
+import 'package:lottie/lottie.dart'; 
 import '../../controllers/home_controller/search_controller.dart';
 import '../../services/result of search.dart';
 import '../../utils/images.dart';
@@ -33,7 +32,6 @@ class _SearchResultPageState extends State<SearchResultPage> {
   @override
   void initState() {
     super.initState();
-    // Fetch the search results when the page is initialized
     fetchData();
   }
 
@@ -43,7 +41,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
       widget.selectedLocation,
       widget.selectedJob,
     );
-    setState(() {}); // To refresh UI after data is fetched
+    setState(() {}); 
   }
 
   @override
@@ -74,19 +72,21 @@ class _SearchResultPageState extends State<SearchResultPage> {
             Expanded(
               child: Obx(() {
                 if (searchController.isLoading.value) {
-                  return const Center(child: CircularProgressIndicator());
+                  return  Lottie.asset(
+                          AssetImages.loading,
+                      
+                          fit: BoxFit.scaleDown,
+                        );
                 }
                 if (searchController.errorMessage.value.isNotEmpty) {
                   return Center(child: Text(searchController.errorMessage.value));
                 }
 
                 if (searchController.searchResults.isEmpty) {
-                  // No data found, show Lottie animation and a message
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Display Lottie animation
                         Lottie.asset(
                           AssetImages.noData,
                           width: 250.w,

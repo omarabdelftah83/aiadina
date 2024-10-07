@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:ourhands/models/search_response_model.dart';
 import 'package:ourhands/views/home/seller_page.dart';
 import 'package:ourhands/widgets/app_text/AppText.dart';
-
-import '../../../utils/const.dart';
 import '../../../utils/images.dart';
 import 'user_posts.dart';
 
@@ -21,11 +20,13 @@ class CustomCaredSearchResult extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const SellerPage()),
-        );
-      },
+  if (userData.posts != null && userData.posts!.isNotEmpty) {
+    Get.to(() => SellerPage(userID: userData.posts![0].user!.id!));
+    print("Navigating to SellerPage with userID: ${userData.posts![0].user!.id}");
+
+  }
+},
+
       child: SizedBox(
         height: screenHeight * 0.4,
         width: screenWidth * 0.9,
@@ -80,8 +81,8 @@ class CustomCaredSearchResult extends StatelessWidget {
           child: Image.network(
             userData.images![0],
             fit: BoxFit.cover,
-            width: 100, // Adjust as necessary
-            height: 100, // Adjust as necessary
+            width: 100, 
+            height: 100, 
             errorBuilder: (context, error, stackTrace) {
               return Center(
                 child: Lottie.asset(
@@ -148,13 +149,15 @@ class CustomCaredSearchResult extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 20.h),
-                CustomText(
-                  text: 'بعض الأعمال السابقة لـ ${(userData.posts != null && userData.posts!.isNotEmpty && userData.posts![0].user != null) 
-                      ? userData.posts![0].user!.name ?? 'هذا المستخدم'
-                      : 'هذا المستخدم'}',
-                ),
+               CustomText(
+  text: '${(userData.posts != null && userData.posts!.isNotEmpty && userData.posts![0].user != null) 
+      ? userData.posts![0].user!.name ?? 'هذا المستخدم'
+      : 'هذا المستخدم'}  بعض الأعمال السابقة لـ',
+),
+
                 SizedBox(height: 10.h),
-             UserPosts(posts: userData.posts ?? [],)
+            UserPosts(images: userData.images ?? [])
+
               ],
             ),
           ),

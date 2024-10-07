@@ -17,33 +17,31 @@ class ContactInfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Row(
-        children: [
-          Expanded(
-            child: CustomText(
-              fontSize: 12,
-              text: label,
-              textColor: Colors.grey,
-            ),
-          ),
-          const SizedBox(width: 8),
-          icon is String
-              ? Image.asset(
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CustomText(
+          fontSize: 12,
+          text: label,
+          textColor: Colors.grey,
+        ),
+        const SizedBox(width: 8),
+        icon is String
+            ? Image.asset(
+          icon,
+          width: iconSize,
+          height: iconSize,
+        )
+            : IconButton(
+          onPressed: () {},
+          icon: Icon(
             icon,
-            width: iconSize,
-            height: iconSize,
-          )
-              : IconButton(
-            onPressed: () {},
-            icon: Icon(
-              icon,
-              size: iconSize,
-              color: iconColor,
-            ),
+            size: iconSize,
+            color: iconColor,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

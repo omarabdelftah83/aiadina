@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:lottie/lottie.dart';
 import 'package:ourhands/controllers/home_controller/get_search_controller.dart';
+import 'package:ourhands/utils/images.dart';
 import 'package:ourhands/views/ads/ads_page.dart';
 import 'package:ourhands/views/home/search_result_page.dart';
 import 'package:ourhands/views/profile/profile_page.dart';
@@ -28,15 +30,17 @@ class HomePage extends StatelessWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showCustomDialog(context);
       });
-      box.write('hasShownDialogeask', true);
+      box.write('hasShownDialogeask', false);
     }
-
     return Scaffold(
       body: CustomPaddingApp(
         child: SingleChildScrollView(
           child: Obx(() {
             if (_controller.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
+              return    Lottie.asset(
+                          AssetImages.loading,                     
+                          fit: BoxFit.scaleDown,
+                        );
             }
 
             return Column(
