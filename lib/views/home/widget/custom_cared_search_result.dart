@@ -28,7 +28,7 @@ class CustomCaredSearchResult extends StatelessWidget {
 },
 
       child: SizedBox(
-        height: screenHeight * 0.4,
+      
         width: screenWidth * 0.9,
         child: Card(
           color: Colors.white,
@@ -130,21 +130,20 @@ class CustomCaredSearchResult extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Flexible(
-                      child: Row(
-                        children: [
-                          CustomText(
-                            text: userData.jobs != null && userData.jobs!.isNotEmpty
-                                ? userData.jobs!.join(', ')
-                                : 'لا توجد وظيفة مدرجة',
-                            textColor: Colors.grey,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.asset('assets/images/mdi_cake.png'),
-                          ),
-                        ],
-                      ),
+                    Spacer(),
+                    Row(
+                      children: [
+                        CustomText(
+                          text: userData.jobs != null && userData.jobs!.isNotEmpty
+                              ? userData.jobs!.take(3).toString()
+                              : 'لا توجد وظيفة',
+                          textColor: Colors.grey,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset('assets/images/mdi_cake.png'),
+                        ),
+                      ],
                     ),
                   ],
                 ),

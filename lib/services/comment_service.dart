@@ -6,7 +6,7 @@ import '../models/comments_model.dart';
 
 class CommentService {
   final String commentUrl = '$baseUrl/api/v1/comments';
-  final String actionCommentUrl = '$baseUrl/api/v1/comments/';
+  final String actionCommentUrl = '$baseUrl/api/v1/comments';
 
 
 Future<bool> updateComment(String commentId, String newText) async {
@@ -15,7 +15,6 @@ Future<bool> updateComment(String commentId, String newText) async {
     'text': newText,
   });
 
-  // Prepare the request headers
   String? token = CacheHelper.getToken();
   var headers = {
     'Authorization': 'Bearer $token',
@@ -125,33 +124,36 @@ Future<bool> deleteComment(String commentId) async {
       return false; 
     }
   }
-  Future<CommentResponse?> fetchComments() async {
-    String? token = CacheHelper.getToken();
-    var headers = {
-      'Content-Type': 'application/json',
-    };
-    if (token != null) {
-      headers['Authorization'] = 'Bearer $token';
-    }
+ Future<CommentResponse?> fetchComments(String postId) async {
+  String? token = CacheHelper.getToken();
+  var headers = {
+    'Content-Type': 'application/json',
+  };
 
-    print('Fetching comments from $commentUrl with headers: $headers');
+  if (token != null) {
+    headers['Authorization'] = 'Bearer $token';
+  }
 
-    try {
-      final response = await http.get(Uri.parse(commentUrl), headers: headers);
+  String url = '$commentUrl/$postId';
 
-      print('Response status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
+  print('Fetching comments from $url with headers: $headers');
 
-      if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.body);
-        return CommentResponse.fromJson(jsonResponse);
-      } else {
-        print('Failed to load comments');
-        return null;
-      }
-    } catch (error) {
-      print('Error fetching comments: $error');
+  try {
+    final response = await http.get(Uri.parse(url), headers: headers);
+
+    print('Response status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      return CommentResponse.fromJson(jsonResponse);
+    } else {
+      print('Failed to load comments');
       return null;
     }
+  } catch (error) {
+    print('Error fetching comments: $error');
+    return null;
   }
+}
 }

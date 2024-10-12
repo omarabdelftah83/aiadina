@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-
-import '../../../utils/const.dart';
 import '../../../utils/images.dart';
 
 class ProductCardImage extends StatelessWidget {
@@ -17,13 +15,12 @@ class ProductCardImage extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         itemCount: imageUrls.length,
         itemBuilder: (context, index) {
-                          final String imageUrl = baseUrl + imageUrls[index];
-
+        final String imageUrl =  imageUrls[index];
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: InkWell(
               onTap: () {
-                _showFullImage(context, imageUrls[index]);
+                showFullImage(context, imageUrls[index]);
               },
               child: Image.network( imageUrl,),
             ),
@@ -40,7 +37,7 @@ class ProductCardImage extends StatelessWidget {
         );
   }
 
-  void _showFullImage(BuildContext context, String imageUrl) {
+  void showFullImage(BuildContext context, String imageUrl) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

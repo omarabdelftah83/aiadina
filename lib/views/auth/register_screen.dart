@@ -98,7 +98,7 @@ class SignUP extends StatelessWidget {
                           AuthTextFormField(
                             label: Strings.location,
                             height: 50.h,
-                            controller: controller.locationController,
+                            controller: controller.districtController,
                             textInputType: TextInputType.text,
                             hintText: 'Your Location',
                             enabled: !controller.isLoading.value, // Disable during loading

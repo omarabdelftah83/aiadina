@@ -11,7 +11,7 @@ class RegisterController extends GetxController {
   final TextEditingController confirmationController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
   final TextEditingController mobileController = TextEditingController();
-  final TextEditingController locationController = TextEditingController(); 
+  final TextEditingController districtController = TextEditingController(); 
 
   final formKeyLogin = GlobalKey<FormState>();
   final RxBool isLoading = false.obs;
@@ -45,7 +45,7 @@ class RegisterController extends GetxController {
       name: nameController.text,
       phone: mobileController.text,
       city: cityController.text,
-      location: locationController.text,
+      location: districtController.text,
       email: emailController.text,
       password: passwordController.text,
       confirmPassword: confirmationController.text,

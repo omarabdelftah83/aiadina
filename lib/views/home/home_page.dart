@@ -15,6 +15,7 @@ import 'package:ourhands/widgets/custom/custom_button.dart';
 import 'package:ourhands/widgets/text_failed/drop_down_custom_textfailed.dart';
 import '../../Bindings/service_locator.dart';
 import '../../controllers/home_controller/search_controller.dart';
+import '../profile/page_loading.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
@@ -123,7 +124,7 @@ class HomePage extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
-            Get.to(const AdsPage());
+            Get.to(const PageLoading());
           },
           child: const CustomText(
             textColor: Colors.green,

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:ourhands/models/get_single_user.dart';
 import 'package:ourhands/widgets/app_text/AppText.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import '../../../utils/const.dart';
 import 'comments_dialog.dart';
 import 'product_card_image.dart';
 import 'product_card_comments.dart';
 
 class ProductCard extends StatelessWidget {
   final Post item;
-
   const ProductCard({
     Key? key,
     required this.item,
@@ -16,35 +16,30 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     final List<String> imageUrls = item.images?.map((img) {
-  if (img.url != null && img.url!.isNotEmpty) {
-    return '${img.url}';
-  }
-  return null;
-}).where((url) => url != null).cast<String>().toList() ?? []; 
+    final String? imageUrls = item.images?.url != null ? baseUrl + item.images!.url! : null;
+    print('Full Image URL: $imageUrls'); 
 
-print(item.images);
-    return   Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          side: const BorderSide(color: Colors.grey, width: 0.1),
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+        side: const BorderSide(color: Colors.grey, width: 0.1),
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      elevation: 3,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            _buildHeader(),
+            const SizedBox(height: 8),
+        ProductCardImage(imageUrls: imageUrls != null ? [imageUrls] : []),
+            ProductCardComments(onTap: () {
+              CommentsDialog.show(context, item.id!);
+            }),
+          ],
         ),
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        elevation: 3,
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 8),
-              ProductCardImage(imageUrls: imageUrls),
-              ProductCardComments(onTap: () {
-                CommentsDialog.show(context, item.id!);
-              }),
-            ],
-          ),
-        ),
-      );
+      ),
+    );
   }
 
   Widget _buildHeader() {
@@ -70,5 +65,4 @@ print(item.images);
     final DateTime dateTime = DateTime.parse(createdAt);
     return timeago.format(dateTime);
   }
-  
 }

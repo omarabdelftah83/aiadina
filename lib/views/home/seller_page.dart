@@ -4,9 +4,7 @@ import 'package:lottie/lottie.dart';
 import '../../controllers/user_single_controller/get_single_user__controller.dart';
 import '../../services/get_single_user.dart';
 import '../../utils/images.dart';
-import '../../widgets/shared/show_full_image.dart';
 import 'widget/contact_info.dart';
-import 'widget/custom_rating.dart';
 import 'package:ourhands/widgets/app_text/AppText.dart';
 import 'package:ourhands/widgets/appar/custom_app_padding.dart';
 import 'get Single user/product_cared.dart';
@@ -127,6 +125,7 @@ return CustomPaddingApp(
                   const SizedBox(height: 20),
                   ListView.builder(
                     shrinkWrap: true,
+                    reverse: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: user.posts!.length, 
                     itemBuilder: (context, index) {

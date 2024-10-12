@@ -1,3 +1,49 @@
+class SearchResponse {
+  String? status;
+  String? message;
+  int? length;
+  List<UserData>? data;
+
+  SearchResponse({this.status, this.message, this.length, this.data});
+
+  factory SearchResponse.fromJson(Map<String, dynamic> json) {
+    return SearchResponse(
+      status: json['status'],
+      message: json['message'],
+      length: json['length'],
+      data: (json['data'] as List?)?.map((item) => UserData.fromJson(item)).toList(),
+    );
+  }
+}
+
+class UserData {
+  String? id;
+  String? location;
+  String? city;
+  List<String>? jobs;
+  List<Post>? posts;
+  List<String>? images;
+
+  UserData({this.id, this.location, this.city, this.jobs, this.posts, this.images});
+
+  factory UserData.fromJson(Map<String, dynamic> json) {
+    print('Parsing UserData: $json');  // Debugging JSON parsing
+    return UserData(
+      id: json['_id'],
+      location: json['location'],
+      city: json['city'],
+      jobs: List<String>.from(json['jobs']),
+      posts: (json['posts'] as List).map((post) => Post.fromJson(post)).toList(),
+      images: List<String>.from(json['images']),
+    );
+  }
+
+  @override
+  String toString() {
+    return 'UserData(id: $id, location: $location, city: $city, jobs: $jobs, images: $images)';
+  }
+}
+
 class UserResponse {
   String? status;
   String? message;
@@ -47,7 +93,7 @@ class User {
   int? version;
   String? passwordResetToken;
   String? passwordResetTokenExpire;
-  List<Post>? posts; 
+  List<Post>? posts; // Adding posts field
 
   User({
     this.id,
@@ -100,7 +146,7 @@ class Post {
   String? title;
   String? description;
   User? user;
-  List<ImagesE>? images; 
+   ImageModel? images; // Modified to List<ImagesE>
   List<String>? likes;
   String? job;
   String? createdAt;
@@ -128,9 +174,7 @@ class Post {
       title: json['title'] as String?,
       description: json['description'] as String?,
       user: json['user'] != null ? User.fromJson(json['user']) : null,
-      images: json['images'] != null 
-          ? (json['images'] as List).map((i) => ImagesE.fromJson(i)).toList()
-          : null,
+      images: ImageModel.fromJson(json['image']),
       likes: json['likes'] != null ? List<String>.from(json['likes']) : null,
       job: json['job'] as String?,
       createdAt: json['createdAt'] as String?,
@@ -146,15 +190,13 @@ class Post {
   }
 }
 
-
-
-class ImagesE {
+class ImageModel {
   String? url;
 
-  ImagesE({this.url});
+  ImageModel({this.url});
 
-  factory ImagesE.fromJson(Map<String, dynamic> json) {
-    return ImagesE(
+  factory ImageModel.fromJson(Map<String, dynamic> json) {
+    return ImageModel(
       url: json['url'] as String?,
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ourhands/utils/colors.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:get/get.dart'; // Import GetX package
+import 'package:get/get.dart'; 
 import '../../../../models/comments_model.dart';
 import '../../../../services/comment_service.dart';
 
@@ -16,20 +16,20 @@ Future<void> showSingleCommentDialog(BuildContext context, Comment comment) asyn
         backgroundColor: Colors.white,
         title: Text(
           comment.username ?? 'مستخدم مجهول',
-          style: TextStyle(
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 20,
             color: Colors.black87,
           ),
         ),
         content: Container(
-          constraints: BoxConstraints(maxHeight: 300),
+          constraints: const BoxConstraints(maxHeight: 300),
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             color: Colors.grey.shade100,
-            boxShadow: [
-              BoxShadow(
+            boxShadow:const[
+               BoxShadow(
                 color: Colors.black26,
                 blurRadius: 10,
                 offset: Offset(0, 2),
@@ -42,7 +42,7 @@ Future<void> showSingleCommentDialog(BuildContext context, Comment comment) asyn
               children: [
                 Text(
                   comment.text ?? '',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.black,
                     fontSize: 16,
                     height: 1.4,
@@ -51,7 +51,7 @@ Future<void> showSingleCommentDialog(BuildContext context, Comment comment) asyn
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.start,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   'last updated ${timeago.format(DateTime.parse(comment.createdAt.toString()), locale: 'en_short')}',
                   style: TextStyle(

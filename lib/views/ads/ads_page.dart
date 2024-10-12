@@ -5,6 +5,8 @@ import 'package:ourhands/widgets/appar/custom_app_padding.dart';
 import 'package:ourhands/widgets/custom/custom_button.dart';
 import 'package:ourhands/widgets/text_failed/drop_down_custom_textfailed.dart';
 
+import 'add_products_alert.dart';
+
 class AdsPage extends StatelessWidget {
   const AdsPage({super.key});
 
@@ -101,7 +103,9 @@ class AdsPage extends StatelessWidget {
               SizedBox(height: 127.h),
               CustomButton(
                 text: 'متابعه',
-                onTap: () {},
+                onTap: () {
+                  addAds(context);
+                },
                 height: 45,
               ),
               SizedBox(height: 30.h),

@@ -33,14 +33,14 @@ class CommentsDialog {
               content: StatefulBuilder(
                 builder: (context, setState) {
                   return FutureBuilder<CommentResponse?>(
-                    future: _commentService.fetchComments(),
+                    future: _commentService.fetchComments(postId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return _loadingWidget();
                       } else if (snapshot.hasError ||
                           !snapshot.hasData ||
                           snapshot.data!.comments!.isEmpty) {
-                        return _noCommentsWidget();
+    return _noCommentsWidget(context, _commentController, setState, _commentService, postId);
                       }
 
                       final comments = snapshot.data!.comments!;
@@ -85,19 +85,26 @@ class CommentsDialog {
     );
   }
 
-  static Widget _noCommentsWidget() {
-    return Container(
-      height: 300,
-      padding: const EdgeInsets.all(16),
-      child: const Center(
-        child: CustomText(
+ static Widget _noCommentsWidget(
+    BuildContext context, TextEditingController commentController, 
+    StateSetter setState, CommentService commentService, String postId) {
+  return Container(
+    height: 300,
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const CustomText(
           text: 'لا توجد تعليقات حالياً.',
           textColor: Colors.grey,
           fontSize: 16,
         ),
-      ),
-    );
-  }
+        const SizedBox(height: 16),
+        _commentInput(commentController, setState, commentService, postId),
+      ],
+    ),
+  );
+}
 
   static Widget _commentsList(BuildContext context, List<Comment> comments,
       StateSetter setState, String postId, TextEditingController commentController, CommentService commentService) {
@@ -146,6 +153,7 @@ class CommentsDialog {
     return Expanded(
       child: SizedBox(
         height: 300,
+        width: double.maxFinite,
         child: ListView.builder(
           shrinkWrap: true,
           itemCount: comments.length,
