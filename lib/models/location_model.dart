@@ -1,67 +1,37 @@
-// location_model.dart
 
-class LocationModel {
-  final String id;
-  final String city;
-  final String district;
-  final int version; 
+class ApiResponseModel {
+  final String status;
+  final int results;
+  final CityDistrictModel data;
 
-  LocationModel({
-    required this.id,
-    required this.city,
-    required this.district,
-    required this.version,
+  ApiResponseModel({
+    required this.status,
+    required this.results,
+    required this.data,
   });
 
-  factory LocationModel.fromJson(Map<String, dynamic> json) {
-    return LocationModel(
-      id: json['_id'] as String,
-      city: json['city'] as String,
-      district: json['district'] as String,
-      version: json['__v'] as int,
+  factory ApiResponseModel.fromJson(Map<String, dynamic> json) {
+    return ApiResponseModel(
+      status: json['status'],
+      results: json['results'],
+      data: CityDistrictModel.fromJson(json['data']),
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      '_id': id,
-      'city': city,
-      'district': district,
-      '__v': version,
-    };
   }
 }
 
-class LocationResponse {
-  final String status;
-  final int results;
-  final List<LocationModel> locations;
 
-  LocationResponse({
-    required this.status,
-    required this.results,
-    required this.locations,
-  });
+class CityDistrictModel {
+  final List<String> cities;
+  final List<String> districts;
 
-  factory LocationResponse.fromJson(Map<String, dynamic> json) {
-    final List<dynamic> locationData = json['data']['locations'];
+  CityDistrictModel({required this.cities, required this.districts});
 
-    return LocationResponse(
-      status: json['status'] as String,
-      results: json['results'] as int,
-      locations: List<LocationModel>.from(
-        locationData.map((location) => LocationModel.fromJson(location)),
-      ),
+  factory CityDistrictModel.fromJson(Map<String, dynamic> json) {
+    return CityDistrictModel(
+      cities: List<String>.from(json['cities']),
+      districts: List<String>.from(json['districts']),
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'status': status,
-      'results': results,
-      'data': {
-        'locations': locations.map((location) => location.toJson()).toList(),
-      },
-    };
-  }
+
 }

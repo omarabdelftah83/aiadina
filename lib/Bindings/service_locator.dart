@@ -7,7 +7,8 @@ import 'package:ourhands/services/login_service.dart';
 import 'package:ourhands/services/register_service.dart';
 import '../controllers/home_controller/search_controller.dart';
 import '../services/result of search.dart';
-import '../services/user_search-3_service.dart'; 
+import '../services/user_search-3_service.dart';
+import '../services/get_single_user.dart'; 
 
 final GetIt getIt = GetIt.instance;
 
@@ -25,7 +26,10 @@ void setupDependencyInjection() {
   getIt.registerLazySingleton<SearchService>(() => SearchService());
   getIt.registerLazySingleton<UserSearchService>(() => UserSearchService());
 
+  // Registering GetSingleUser service
+  getIt.registerLazySingleton<GetSingleUser>(() => GetSingleUser());
+
   // Registering Search and Home Controllers
   getIt.registerFactory<SearchHomeController>(() => SearchHomeController(getIt<SearchService>()));
- // getIt.registerFactory<HomeController>(() => HomeController(getIt<UserSearchService>()));
+  // getIt.registerFactory<HomeController>(() => HomeController(getIt<UserSearchService>()));
 }

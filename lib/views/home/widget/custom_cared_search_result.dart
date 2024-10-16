@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:ourhands/models/search_response_model.dart';
 import 'package:ourhands/views/home/seller_page.dart';
 import 'package:ourhands/widgets/app_text/AppText.dart';
+import '../../../utils/const.dart';
 import '../../../utils/images.dart';
 import 'user_posts.dart';
 
@@ -47,7 +48,7 @@ class CustomCaredSearchResult extends StatelessWidget {
                     Expanded(
                       child: Row(
                         children: [
-                          SizedBox(width: 70.w),
+                         
                           Flexible(
                             child: CustomText(
                               text: (userData.posts != null &&
@@ -74,39 +75,36 @@ class CustomCaredSearchResult extends StatelessWidget {
                         ),
                         SizedBox(width: screenWidth * 0.02),
                      CircleAvatar(
-  radius: screenWidth * 0.05,
-  backgroundColor: Colors.grey[200],
-  child: userData.images != null && userData.images!.isNotEmpty
-      ? ClipOval(
-          child: Image.network(
-            userData.images![0],
-            fit: BoxFit.cover,
-            width: 100, 
-            height: 100, 
-            errorBuilder: (context, error, stackTrace) {
-              return Center(
-                child: Lottie.asset(
-                  AssetImages.noImage,
-                  width: 60,
-                  height: 60,
-                  fit: BoxFit.cover,
-                ),
-              );
-            },
-          ),
-        )
-      : Center(
-          child: Lottie.asset(
-            AssetImages.noImage,
-            width: 60,
-            height: 60,
-            fit: BoxFit.cover,
-          ),
-        ),
-),
-
-
-
+              radius: screenWidth * 0.05,
+              backgroundColor: Colors.grey[200],
+              child: userData.images != null && userData.images!.isNotEmpty
+                  ? ClipOval(
+                      child: Image.network(
+                       baseUrl+ userData.images![0],
+                        fit: BoxFit.cover,
+                        width: 100, 
+                        height: 100, 
+                        errorBuilder: (context, error, stackTrace) {
+                          return Center(
+                            child: Lottie.asset(
+                              AssetImages.noImage,
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  : Center(
+                      child: Lottie.asset(
+                        AssetImages.noImage,
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+            ),
                       ],
                     ),
                   ],
@@ -135,7 +133,7 @@ class CustomCaredSearchResult extends StatelessWidget {
                       children: [
                         CustomText(
                           text: userData.jobs != null && userData.jobs!.isNotEmpty
-                              ? userData.jobs!.take(3).toString()
+                              ? userData.jobs!.take(1).toString()
                               : 'لا توجد وظيفة',
                           textColor: Colors.grey,
                         ),

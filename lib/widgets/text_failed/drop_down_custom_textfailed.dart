@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DropDownCustomTextfailed extends StatefulWidget {
-  DropDownCustomTextfailed({
-    Key? key,
+  const DropDownCustomTextfailed({
+    super.key,
     this.hintText,
     this.keyboardType,
     this.prefixIcon,
@@ -11,7 +11,7 @@ class DropDownCustomTextfailed extends StatefulWidget {
     this.onDropdownChanged,
     this.dropdownValue,
     this.onTap,
-  }) : super(key: key);
+  });
 
   final String? hintText;
   final TextInputType? keyboardType;

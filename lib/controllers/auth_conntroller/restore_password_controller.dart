@@ -8,24 +8,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/user_model_register.dart';
 import '../../views/auth/login_screen.dart';
 import '../../views/auth/widgets/new_password_pgae.dart';
-
 class PasswordRecoveryController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController otpController = TextEditingController(); 
   final TextEditingController passwordController = TextEditingController(); 
   final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController passwordControllerProfile = TextEditingController(); 
+  final TextEditingController confirmPasswordControllerProfile = TextEditingController();
   final PageController pageController = PageController();
   final currentPage = 0.obs;
   final PasswordRecoveryService service;
   var isLoading = false.obs;
-
   String email = '';
   bool isRecovering = false;
-
   var isResendEnabled = true.obs;
   var countdownTimer = 30.obs;
   Timer? _timer;
-
   PasswordRecoveryController(this.service);
 
   void nextPage() {
@@ -118,7 +116,7 @@ class PasswordRecoveryController extends GetxController {
           showSnackbar('Error', response['message'] ?? 'Unknown error', isSuccess: false);
         }
       } catch (e) {
-        showSnackbar('Error', 'An error occurred while verifying OTP. Please try again.', isSuccess: false);
+        print('Error');
       } finally {
         isLoading.value = false;
       }
@@ -127,42 +125,78 @@ class PasswordRecoveryController extends GetxController {
     }
   }
 
-  Future<void> resetPassword() async {
-    final password = passwordController.text.trim(); 
-    final confirmPassword = confirmPasswordController.text.trim();
+    Future<void> resetPassword() async {
+      final password = passwordController.text.trim(); 
+      final confirmPassword = confirmPasswordController.text.trim();
 
-    final prefs = await SharedPreferences.getInstance();
-    email = prefs.getString('recoveryEmail') ?? '';
+      final prefs = await SharedPreferences.getInstance();
+      email = prefs.getString('recoveryEmail') ?? '';
 
-    if (email.isNotEmpty && password.isNotEmpty && confirmPassword.isNotEmpty) {
-      if (password == confirmPassword) {
-        if (password.length < 6) {
-          showSnackbar('Error', 'Password must be at least 6 characters long.', isSuccess: false);
-          return;
-        }
-        isLoading.value = true;
-        try {
-          await service.resetPassword(email, password, confirmPassword);
-          showSnackbar('Success', 'Password reset successfully', isSuccess: true);
-          Get.to(HomePage());
-        } catch (e) {
-          showSnackbar('Error', 'An error occurred while resetting password. Please try again.', isSuccess: false);
-        } finally {
-          isLoading.value = false;
+      if (email.isNotEmpty && password.isNotEmpty && confirmPassword.isNotEmpty) {
+        if (password == confirmPassword) {
+          if (password.length < 6) {
+            showSnackbar('Error', 'Password must be at least 6 characters long.', isSuccess: false);
+            return;
+          }
+          isLoading.value = true;
+          try {
+            await service.resetPassword(email, password, confirmPassword);
+            showSnackbar('Success', 'Password reset successfully', isSuccess: true);
+            Get.to(HomePage());
+          } catch (e) {
+          } finally {
+            isLoading.value = false;
+          }
+        } else {
+          showSnackbar('Error', 'Passwords do not match', isSuccess: false);
         }
       } else {
-        showSnackbar('Error', 'Passwords do not match', isSuccess: false);
+        showSnackbar('Error', 'Please fill all fields', isSuccess: false);
       }
-    } else {
-      showSnackbar('Error', 'Please fill all fields', isSuccess: false);
     }
-  }
+
+    Future<void> resetPasswordSettings(String? email) async {
+      print('Email: $email');
+      print('Password: ${passwordControllerProfile.text}');
+      print('Confirm Password: ${confirmPasswordControllerProfile.text}');
+
+      final passwordSettings = passwordControllerProfile.text.trim(); 
+      final confirmPasswordSettings = confirmPasswordControllerProfile.text.trim();
+      if (email != null && email.isNotEmpty && passwordSettings.isNotEmpty && confirmPasswordSettings.isNotEmpty) {
+        if (passwordSettings == confirmPasswordSettings) {
+          if (passwordSettings.length < 6) {
+            showSnackbar('Error', 'Password must be at least 6 characters long.', isSuccess: false);
+            return;
+          }
+
+          isLoading.value = true;
+          try {
+            print('Attempting to reset password');
+            await service.resetPassword(email, passwordSettings, confirmPasswordSettings);
+            print('Password reset success');
+            showSnackbar('Success', 'Password reset successfully', isSuccess: true);
+            Get.to(() => HomePage());
+          } on Exception catch (e) {
+            print('Error occurred while resetting password: $e');
+          } finally {
+            isLoading.value = false;
+          }
+        } else {
+          showSnackbar('Error', 'Passwords do not match', isSuccess: false);
+        }
+      } else {
+        showSnackbar('Error', 'Please fill all fields', isSuccess: false);
+      }
+    }
+
+
+
 
   void handleCancelOtp() {
     if (isRecovering) {
       Get.off(VerificationCodePage()); 
     } else {
-      Get.off(LoginPage()); 
+      Get.off( ()=> const LoginPage()); 
     }
   }
 
@@ -174,6 +208,8 @@ class PasswordRecoveryController extends GetxController {
     otpController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
+    passwordControllerProfile.dispose();
+    confirmPasswordControllerProfile.dispose();
     super.onClose();
   }
 

@@ -93,7 +93,7 @@ class User {
   int? version;
   String? passwordResetToken;
   String? passwordResetTokenExpire;
-  List<Post>? posts; // Adding posts field
+  List<Post>? posts; 
 
   User({
     this.id,

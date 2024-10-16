@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import '../../controllers/user_single_controller/get_single_user__controller.dart';
 import '../../services/get_single_user.dart';
+import '../../utils/const.dart';
 import '../../utils/images.dart';
 import 'widget/contact_info.dart';
 import 'package:ourhands/widgets/app_text/AppText.dart';
@@ -47,6 +48,7 @@ class _SellerPageState extends State<SellerPage> {
             return const Center(child: Text('User not found'));
           }
 return CustomPaddingApp(
+
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,9 +56,11 @@ return CustomPaddingApp(
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                  
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          
                           CustomText(
                             text: user.name ?? 'User Name', 
                             fontSize: 20,
@@ -77,12 +81,20 @@ return CustomPaddingApp(
                       CircleAvatar(
                         radius: MediaQuery.of(context).size.width * 0.07,
                         backgroundImage: user.profilePhoto?.isNotEmpty == true
-                            ? NetworkImage(user.profilePhoto!)
+                            ? NetworkImage(baseUrl+user.profilePhoto!)
                             : null,
                         child: user.profilePhoto?.isEmpty == true
                             ? const Icon(Icons.person)
                             : null,
                       ),
+                            IconButton(
+                    icon: const Icon(Icons.arrow_forward_ios_outlined ,
+                    size: 22,
+                    ),
+                    onPressed: () {
+                      Get.back();
+                    },
+                  ),
                     ],
                   ),
                   const SizedBox(height: 15),

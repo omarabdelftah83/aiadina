@@ -8,5 +8,7 @@ class AssetImages {
   static const String loading = "assets/images/loading.json";
   static const String noData = "assets/images/noData.json";
   static const String noImage = "assets/images/noImage.json";
+  static const String noUser = "assets/images/noUser.json";
+  static const String iconApp = "assets/images/iconApp.app";
 
 }

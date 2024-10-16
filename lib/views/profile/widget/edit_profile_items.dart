@@ -6,7 +6,7 @@ class EditProfileTextFieldAndLabel extends StatefulWidget {
   final String? text;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
-  final Widget? customIcon; // خاصية جديدة لتلقي الأيقونة المخصصة
+  final Widget? customIcon;
   final Widget? suffixIcon;
   final bool isPassword;
   final bool isSelectable;
@@ -14,9 +14,11 @@ class EditProfileTextFieldAndLabel extends StatefulWidget {
   final String? errorText;
   final String? hintText;
   final bool obscureText;
+  final void Function(String)? onSubmitted;
+  final String? Function(String?)? validator;
 
   const EditProfileTextFieldAndLabel({
-    super.key,
+    Key? key,
     this.label,
     this.controller,
     this.keyboardType,
@@ -29,7 +31,9 @@ class EditProfileTextFieldAndLabel extends StatefulWidget {
     this.errorText,
     this.hintText,
     this.obscureText = false,
-  });
+    this.onSubmitted,
+       this.validator,
+  }) : super(key: key);
 
   @override
   _EditProfileTextFieldAndLabelState createState() =>
@@ -54,7 +58,6 @@ class _EditProfileTextFieldAndLabelState
   void _toggleEdit() {
     setState(() {
       if (_isEditing) {
-        // Update _currentText with the value from the controller when exiting edit mode
         widget.controller?.text = _localController.text;
       }
       _isEditing = !_isEditing;
@@ -132,6 +135,11 @@ class _EditProfileTextFieldAndLabelState
                           ),
                           alignLabelWithHint: true,
                         ),
+                        onFieldSubmitted: (value) {
+                          if (widget.onSubmitted != null) {
+                            widget.onSubmitted!(value); // Call the onSubmitted callback
+                          }
+                        },
                       )
                     : Row(
                         children: [
@@ -142,7 +150,8 @@ class _EditProfileTextFieldAndLabelState
                                 padding: const EdgeInsets.only(right: 16.0),
                                 child: Text(
                                   _obscureText
-                                      ? '' * _localController.text.length : '',
+                                      ? '*' * _localController.text.length
+                                      : _localController.text,
                                 ),
                               ),
                             ),

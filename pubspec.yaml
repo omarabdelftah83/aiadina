@@ -28,46 +28,44 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  connectivity_plus: ^6.0.5
+  cupertino_icons: ^1.0.6
+  device_preview: ^1.1.0
+  dots_indicator: ^3.0.0
   flutter:
     sdk: flutter
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.6
-  hexcolor: ^3.0.1
-  velocity_x:
-  device_preview: ^1.1.0
-  google_fonts:
-  flutter_screenutil: ^5.9.1
-  get: ^4.6.5
-  http:
-  image_picker: ^1.1.2
-  timer_count_down: ^2.2.2
-  dots_indicator: ^3.0.0
-  gradient_textfield: ^0.0.1
-  pagination_flutter: ^0.0.8
-  flutter_otp_text_field: ^1.1.3+2
-  path_provider_android: ^2.2.4
-  smooth_page_indicator: ^1.1.0
-  shimmer: ^3.0.0
-  shared_preferences: ^2.2.3
-  flutter_xlider: ^3.5.0
-  syncfusion_flutter_sliders: ^26.1.40
-  syncfusion_flutter_charts: ^26.1.40
-  url_launcher: ^6.3.0
+  flutter_animate: ^4.5.0
   flutter_image_compress: ^2.3.0
-  flutter_rating_bar:
-  get_storage: ^2.1.1
-  lottie: ^3.1.2
+  flutter_launcher_icons: ^0.14.1
+  flutter_otp_text_field: ^1.1.3+2
+  flutter_rating_bar: null
+  flutter_screenutil: ^5.9.1
+  flutter_xlider: ^3.5.0
+  get: ^4.6.5
   get_it: ^8.0.0
-  sms_autofill: ^2.4.0
-  timeago: ^3.7.0
+  get_storage: ^2.1.1
+  google_fonts: null
+  gradient_textfield: ^0.0.1
+  hexcolor: ^3.0.1
+  http: null
+  icons_launcher: ^3.0.0
+  image_picker: ^1.1.2
+  lottie: ^3.1.3
+  pagination_flutter: ^0.0.8
+  path_provider_android: ^2.2.4
   provider: ^6.1.2
+  shared_preferences: ^2.2.3
+  shimmer: ^3.0.0
+  smooth_page_indicator: ^1.1.0
+  sms_autofill: ^2.4.0
+  syncfusion_flutter_charts: ^26.1.40
+  syncfusion_flutter_sliders: ^26.1.40
+  timeago: ^3.7.0
+  timer_count_down: ^2.2.2
+  url_launcher: ^6.3.0
+  velocity_x: null
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -75,10 +73,17 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
-
+  flutter_test:
+    sdk: flutter
+icons_launcher:
+  image_path: "assets/images/iconApp.png"
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter packages.
 flutter:
 
@@ -91,28 +96,23 @@ flutter:
   assets:
     - assets/images/
   #   - images/a_dot_ham.jpeg
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
-
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
-
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-
   fonts:
     - family: Cairo
       fonts:
-#        - asset: assets/fonts/Cairo-Bold.ttf
-#        - asset: assets/fonts/Cairo-Black.ttf
-#        - asset: assets/fonts/Cairo-Light.ttf
+        #        - asset: assets/fonts/Cairo-Bold.ttf
+        #        - asset: assets/fonts/Cairo-Black.ttf
+        #        - asset: assets/fonts/Cairo-Light.ttf
         - asset: assets/fonts/Cairo-Regular.ttf
-#        - asset: assets/fonts/Cairo-SemiBold.ttf
-
+  #        - asset: assets/fonts/Cairo-SemiBold.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

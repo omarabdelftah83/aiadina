@@ -62,8 +62,7 @@ import '../../views/home/home_page.dart';
     } on Exception catch (e) {
       isLoading.value = false;
       print('Login failed, exception: $e');
-      Get.snackbar('Error', 'An error occurred during login: $e',
-          snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
+    
     }
   }
 

@@ -27,7 +27,7 @@
     UserData({this.id, this.location, this.city, this.jobs, this.posts, this.images});
 
     factory UserData.fromJson(Map<String, dynamic> json) {
-      print('Parsing UserData: $json');  // Debugging JSON parsing
+      print('Parsing UserData: $json'); 
       return UserData(
         id: json['_id'],
         location: json['location'],
