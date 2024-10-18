@@ -32,8 +32,8 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                 },
                 children: [
                   buildEmailInputPage(),
-                //  VerificationCodePage(),
-               //   NewPasswordPage(),
+                VerificationCodePage(),
+                NewPasswordPage(),
                 ],
               ),
             ),
