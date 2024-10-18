@@ -21,10 +21,12 @@
     String? location;
     String? city;
     List<String>? jobs;
+    final String? profilePhoto;
+
     List<Post>? posts;
     List<String>? images;
 
-    UserData({this.id, this.location, this.city, this.jobs, this.posts, this.images});
+    UserData({this.id, this.location, this.city, this.jobs, this.posts, this.images, this.profilePhoto});
 
     factory UserData.fromJson(Map<String, dynamic> json) {
       print('Parsing UserData: $json'); 
@@ -34,6 +36,7 @@
         city: json['city'],
         jobs: List<String>.from(json['jobs']),
         posts: (json['posts'] as List).map((post) => Post.fromJson(post)).toList(),
+        profilePhoto: json['profilePhoto'] ?? '',
         images: List<String>.from(json['images']),
       );
     }

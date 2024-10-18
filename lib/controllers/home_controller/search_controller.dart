@@ -7,11 +7,8 @@ class SearchHomeController extends GetxController {
   var isLoading = false.obs;
   var searchResults = <UserData>[].obs;  
   var errorMessage = ''.obs;
-
   final SearchService searchService;
-
   SearchHomeController(this.searchService);
-
   Future<void> fetchSearchResults(String city, String location, String job) async {
     try {
       isLoading(true);

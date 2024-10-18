@@ -16,18 +16,25 @@ class AdService {
     required List<File> images,
   }) async {
     String? token = CacheHelper.getToken();
+    print('createAd: token: $token');
     var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/api/v1/posts'));
     request.headers['Authorization'] = 'Bearer $token';
+    print('createAd: headers: ${request.headers}');
     request.fields['title'] = title;
+    print('createAd: title: $title');
     request.fields['description'] = description;
+    print('createAd: description: $description');
     request.fields['job'] = job;
+    print('createAd: job: $job');
     for (var image in images) {
       final mimeType = lookupMimeType(image.path);
+      print('createAd: mimeType: $mimeType');
       request.files.add(await http.MultipartFile.fromPath(
         'image',
         image.path,
         contentType: mimeType != null ? MediaType(mimeType.split('/')[0], mimeType.split('/')[1]) : null,
       ));
+      print('createAd: image: ${image.path}');
     }
     var response = await request.send();
 
@@ -35,7 +42,7 @@ class AdService {
       print('Ad created successfully');
       return true;
     } else {
-      print('Failed to create ad: ${response.reasonPhrase}');
+      print('Failed to create ad: ${response.statusCode}');
       print('Response body: ${await response.stream.bytesToString()}');
       return false;
     }

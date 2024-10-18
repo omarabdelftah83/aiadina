@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import '../../controllers/user_single_controller/get_single_user__controller.dart';
+import '../../models/get_single_user.dart';
 import '../../services/get_single_user.dart';
 import '../../utils/const.dart';
 import '../../utils/images.dart';
@@ -20,13 +21,23 @@ class SellerPage extends StatefulWidget {
 }
 
 class _SellerPageState extends State<SellerPage> {
+  late UserController userController;
+
   @override
-  Widget build(BuildContext context) {
-    final UserController userController = Get.put(UserController(
+  void initState() {
+    super.initState();
+    userController = Get.put(UserController(
       userService: GetSingleUser(),
       userId: widget.userID,
     ));
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      userController.fetchUserData();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Obx(() {
         if (userController.isLoading.value) {
@@ -39,7 +50,7 @@ class _SellerPageState extends State<SellerPage> {
           );
         } else if (userController.errorMessage.isNotEmpty) {
           return Center(
-            child: Text(userController.errorMessage.value),
+            child: Text('Error: ${userController.errorMessage.value}'),
           );
         } else {
           final user = userController.userResponse.value.data?.user;
@@ -47,8 +58,8 @@ class _SellerPageState extends State<SellerPage> {
           if (user == null) {
             return const Center(child: Text('User not found'));
           }
-return CustomPaddingApp(
 
+          return CustomPaddingApp(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,45 +67,35 @@ return CustomPaddingApp(
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                  
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          
                           CustomText(
-                            text: user.name ?? 'User Name', 
+                            text: user.name ?? 'User Name',
                             fontSize: 20,
                             fontWeight: FontWeight.w400,
                           ),
-                        /*   RatingWidget(
-                            rating: 5 ,
-                            onRatingUpdate: (newRating) {
-                              setState(() {
-                                // Handle rating update if needed
-                              });
-                            },
-                            size: 15,
-                          ), */
                         ],
                       ),
                       SizedBox(width: MediaQuery.of(context).size.width * 0.03),
                       CircleAvatar(
                         radius: MediaQuery.of(context).size.width * 0.07,
                         backgroundImage: user.profilePhoto?.isNotEmpty == true
-                            ? NetworkImage(baseUrl+user.profilePhoto!)
+                            ? NetworkImage(baseUrl + user.profilePhoto!)
                             : null,
                         child: user.profilePhoto?.isEmpty == true
                             ? const Icon(Icons.person)
                             : null,
                       ),
-                            IconButton(
-                    icon: const Icon(Icons.arrow_forward_ios_outlined ,
-                    size: 22,
-                    ),
-                    onPressed: () {
-                      Get.back();
-                    },
-                  ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.arrow_forward_ios_outlined,
+                          size: 22,
+                        ),
+                        onPressed: () {
+                          Get.back();
+                        },
+                      ),
                     ],
                   ),
                   const SizedBox(height: 15),
@@ -102,46 +103,31 @@ return CustomPaddingApp(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       ContactInfoRow(
-                        label:user.jobs!.first ?? 'No Jobs',
+                        label: user.jobs?.first ?? 'No Jobs',
                         icon: 'assets/images/mdi_cake.png',
                         iconSize: 24,
                       ),
                       ContactInfoRow(
-                        label: user.location ?? 'Location', 
+                        label: user.location ?? 'Location',
                         icon: Icons.location_on,
                         iconColor: Colors.green,
                       ),
                       ContactInfoRow(
-                        label: user.phone ?? 'Phone', 
+                        label: user.phone ?? 'Phone',
                         icon: Icons.call,
                         iconColor: Colors.green,
                       ),
                     ],
                   ),
                   const SizedBox(height: 15),
-                 /*  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      RatingWidget(
-                        rating:  5, 
-                        onRatingUpdate: (newRating) {
-                          setState(() {
-                          });
-                        },
-                        size: 25,
-                      ),
-                      const SizedBox(width: 10),
-                      const CustomText(text: 'قيم'), 
-                    ],
-                  ), */
                   const SizedBox(height: 20),
                   ListView.builder(
                     shrinkWrap: true,
                     reverse: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: user.posts!.length, 
+                    itemCount: user.posts?.length ?? 0,
                     itemBuilder: (context, index) {
-                      return ProductCard(item: user.posts![index]); 
+                      return ProductCard(item: user.posts![index]);
                     },
                   ),
                 ],
@@ -152,5 +138,4 @@ return CustomPaddingApp(
       }),
     );
   }
-   
 }

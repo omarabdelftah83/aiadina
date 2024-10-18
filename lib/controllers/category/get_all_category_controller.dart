@@ -102,7 +102,7 @@ class AddAdsController extends ChangeNotifier {
     print('Failed to create ad');
     Get.snackbar(
       "فشل",
-      "فشلت في إنشاء الإعلان",
+      "فشل في إنشاء الإعلان",
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: Colors.red,
       colorText: Colors.white,

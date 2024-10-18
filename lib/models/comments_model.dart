@@ -1,7 +1,51 @@
+class User {
+  String? id;
+  String? name;
+  String? phone;
+  String? location;
+  String? city;
+  List<String>? jobs;
+  String? email;
+  String? profilePhoto;
+  bool? isAdmin;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+
+  User({
+    this.id,
+    this.name,
+    this.phone,
+    this.location,
+    this.city,
+    this.jobs,
+    this.email,
+    this.profilePhoto,
+    this.isAdmin,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['_id'],
+      name: json['name'],
+      phone: json['phone'],
+      location: json['location'],
+      city: json['city'],
+      jobs: json['jobs'] != null ? List<String>.from(json['jobs']) : null,
+      email: json['email'],
+      profilePhoto: json['profilePhoto'],
+      isAdmin: json['isAdmin'],
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+    );
+  }
+}
+
 class Comment {
   String? id;
   String? postId;
-  dynamic user; 
+  User? user; // Changed to User type to match the structure
   String? text;
   String? username;
   DateTime? createdAt;
@@ -21,7 +65,7 @@ class Comment {
     return Comment(
       id: json['_id'],
       postId: json['postId'],
-      user: json['user'],
+      user: json['user'] != null ? User.fromJson(json['user']) : null,
       text: json['text'],
       username: json['username'],
       createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,

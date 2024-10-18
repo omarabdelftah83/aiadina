@@ -36,35 +36,56 @@ import '../../views/home/home_page.dart';
   }
 
   Future<void> loginUser() async {
-    if (!formKeyLogin.currentState!.validate()) return;
+  if (!formKeyLogin.currentState!.validate()) return;
 
-    isLoading.value = true;
+  isLoading.value = true;
 
-    try {
-      LoginResponse response = await _authService.login(
-        email: emailController.text,
-        password: passwordController.text,
+  try {
+    // Perform the login request
+    LoginResponse response = await _authService.login(
+      email: emailController.text,
+      password: passwordController.text,
+    );
+
+    isLoading.value = false;
+
+    // Check if the login was successful
+    if (response.status?.toLowerCase() == 'success') {
+      print('Login successful, response message: ${response.message}');
+      await cacheUserData(response.user!.id, response.token);
+      Get.snackbar(
+        'نجاح',
+        response.message ?? 'تم تسجيل الدخول بنجاح',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
       );
-
-      isLoading.value = false;
-
-      if (response.status == 'SUCCESS') {
-        print('Login successful, response message: ${response.message}');
-        await cacheUserData(response.user!.id, response.token);
-        Get.snackbar('Success', response.message,
-            snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green);
-        Get.offAll(HomePage());
-      } else {
-        print('Login failed, response message: ${response.message}');
-        Get.snackbar('Error', response.message,
-            snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
-      }
-    } on Exception catch (e) {
-      isLoading.value = false;
-      print('Login failed, exception: $e');
-    
+      Get.offAll(HomePage());
+    } else {
+      // Handle the case where login failed and show the message
+      String errorMessage = response.message ?? 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+      print('Login failed, response message: $errorMessage');
+      Get.snackbar(
+        'خطأ',
+        errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
+  } catch (e) {
+    isLoading.value = false;
+
+    // If an exception occurs, handle it and show a generic error message
+    print('Login failed, exception: $e');
+    Get.snackbar(
+      'خطأ',
+      'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى لاحقاً.',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
   }
+}
 
   // Method to cache the user ID and token
   Future<void> cacheUserData(String userId, String token) async {

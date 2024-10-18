@@ -1,99 +1,48 @@
 import 'dart:async';
-import 'dart:io';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
+enum ConnectivityStatus { Online, Offline }
 
-class _HomePageState extends State<HomePage> {
-  Map _source = {ConnectivityResult.none: false};
-  final MyConnectivity _connectivity = MyConnectivity.instance;
+class ConnectivityService {
+  final StreamController<ConnectivityStatus> _connectionStatusController =
+      StreamController<ConnectivityStatus>.broadcast();
 
-  @override
-  void initState() {
-    super.initState();
-    _connectivity.initialise();
-    _connectivity.myStream.listen((source) {
-      setState(() => _source = source);
-      _handleConnectivityChange(source);
+  Stream<ConnectivityStatus> get connectivityStream =>
+      _connectionStatusController.stream;
+
+  late InternetConnectionChecker _connectionChecker;
+  late StreamSubscription<InternetConnectionStatus> _subscription;
+
+  ConnectivityService() {
+    _connectionChecker = InternetConnectionChecker();
+    _initializeConnectivity();
+  }
+
+  void _initializeConnectivity() {
+    _subscription = _connectionChecker.onStatusChange.listen((status) {
+      _connectionStatusController.add(_getStatusFromResult(status));
     });
+
+    _checkInitialConnectivity();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    String string;
-    switch (_source.keys.toList()[0]) {
-      case ConnectivityResult.mobile:
-        string = 'Mobile: Online';
-        break;
-      case ConnectivityResult.wifi:
-        string = 'WiFi: Online';
-        break;
-      case ConnectivityResult.none:
-      default:
-        string = 'Offline';
+  Future<void> _checkInitialConnectivity() async {
+    bool hasConnection = await _connectionChecker.hasConnection;
+    _connectionStatusController.add(
+        hasConnection ? ConnectivityStatus.Online : ConnectivityStatus.Offline);
+  }
+
+  ConnectivityStatus _getStatusFromResult(InternetConnectionStatus status) {
+    switch (status) {
+      case InternetConnectionStatus.connected:
+        return ConnectivityStatus.Online;
+      case InternetConnectionStatus.disconnected:
+        return ConnectivityStatus.Offline;
     }
-
-    return Scaffold(
-      body: Center(child: Text(string)),
-    );
   }
 
-  @override
   void dispose() {
-    _connectivity.disposeStream();
-    super.dispose();
+    _subscription.cancel();
+    _connectionStatusController.close();
   }
-
-  // This method handles what happens when the connectivity changes
-  void _handleConnectivityChange(Map source) {
-    bool isConnected = source.values.toList()[0];
-    if (!isConnected) {
-      _showNoInternetSnackBar();
-    }
-  }
-
-  // Display a SnackBar when there is no internet connection
-  void _showNoInternetSnackBar() {
-    final snackBar =  const SnackBar(
-      content: const Text('No internet connection. Please check your connection.'),
-      backgroundColor: Colors.red,
-      duration: Duration(seconds: 3),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-}
-
-class MyConnectivity {
-  MyConnectivity._();
-
-  static final _instance = MyConnectivity._();
-  static MyConnectivity get instance => _instance;
-  final _connectivity = Connectivity();
-  final _controller = StreamController.broadcast();
-  Stream get myStream => _controller.stream;
-
-  void initialise() async {
-  ConnectivityResult result = (await _connectivity.checkConnectivity()) as ConnectivityResult;
-  _checkStatus(result);
-  _connectivity.onConnectivityChanged.listen((result) {
-    _checkStatus(result as ConnectivityResult);
-  });
-}
-
-  void _checkStatus(ConnectivityResult result) async {
-    bool isOnline = false;
-    try {
-      final result = await InternetAddress.lookup('example.com');
-      isOnline = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-    } on SocketException catch (_) {
-      isOnline = false;
-    }
-    _controller.sink.add({result: isOnline});
-  }
-
-  void disposeStream() => _controller.close();
 }

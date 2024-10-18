@@ -15,7 +15,7 @@ Future<void> showSingleCommentDialog(BuildContext context, Comment comment) asyn
         ),
         backgroundColor: Colors.white,
         title: Text(
-          comment.username ?? 'مستخدم مجهول',
+          comment.user!.name ?? 'مستخدم مجهول',
           style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 20,

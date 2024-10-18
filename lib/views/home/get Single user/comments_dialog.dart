@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:get/get.dart';
 import 'package:ourhands/utils/colors.dart';
+import 'package:ourhands/utils/const.dart';
 import 'package:ourhands/utils/images.dart';
 import '../../../models/comments_model.dart';
 import '../../../services/comment_service.dart';
 import '../../../widgets/app_text/AppText.dart';
-import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'comments_dailog/show_comments_dialog.dart';
@@ -187,7 +187,7 @@ class CommentsDialog {
                       child: comment.id != null
                           ? ClipOval(
                               child: Image.network(
-                                comment.id!,
+                             baseUrl+   comment.user!.profilePhoto!,
                                 fit: BoxFit.cover,
                                 width: 40,
                                 height: 40,
@@ -196,7 +196,7 @@ class CommentsDialog {
                           : const Icon(Icons.person, color: Colors.white),
                     ),
                     title: CustomText(
-                      text: comment.username ?? 'مستخدم مجهول',
+                      text: comment.user!.name ?? 'مستخدم مجهول',
                       fontWeight: FontWeight.bold,
                     ),
                     subtitle: Column(

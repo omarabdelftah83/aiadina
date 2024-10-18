@@ -10,7 +10,7 @@ class CommentService {
 
 
 Future<bool> updateComment(String commentId, String newText) async {
-  final url = Uri.parse('$actionCommentUrl$commentId');
+  final url = Uri.parse('$actionCommentUrl/$commentId');
   final body = jsonEncode({
     'text': newText,
   });
@@ -52,10 +52,8 @@ Future<bool> updateComment(String commentId, String newText) async {
 }
 
 
-
-
 Future<bool> deleteComment(String commentId) async {
-  final url = Uri.parse('$actionCommentUrl$commentId');
+  final url = Uri.parse('$actionCommentUrl/$commentId');
 
   String? token = CacheHelper.getToken();
   var headers = {

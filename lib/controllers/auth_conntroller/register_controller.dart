@@ -4,6 +4,7 @@ import 'package:ourhands/models/user_model_register.dart';
 import 'package:ourhands/views/home/home_page.dart';
 import '../../services/get_all_locations.dart';
 import '../../services/register_service.dart';
+import '../../views/auth/login_screen.dart';
 
 class RegisterController extends GetxController {
   final TextEditingController emailController = TextEditingController();
@@ -99,7 +100,7 @@ class RegisterController extends GetxController {
       Get.snackbar('Success', response.message,
           snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green);
       
-      Get.to(() => HomePage());
+      Get.to(() =>const LoginPage());
     } else {
       Get.snackbar('Error', response.message,
           snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);

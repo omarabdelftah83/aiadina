@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ourhands/utils/colors.dart';
 import 'Bindings/service_locator.dart';
+import 'controllers/connectivity internet/connectivity_controller.dart';
 import 'controllers/home_controller/get_search_controller.dart';
 import 'controllers/home_controller/search_controller.dart';
 import 'helpers/cache_helper.dart';
@@ -16,6 +17,7 @@ void main() async{
   await CacheHelper.init();
   getIt.registerLazySingleton<HomeController>(() => HomeController());
   setupDependencyInjection();
+  Get.put(ConnectivityController());
    Get.lazyPut(() => SearchService()); 
   Get.lazyPut(() => SearchHomeController(Get.find<SearchService>()));
   runApp(const MyApp());

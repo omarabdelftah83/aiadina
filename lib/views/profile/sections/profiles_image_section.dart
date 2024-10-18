@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
@@ -8,7 +9,7 @@ import '../../../utils/const.dart';
 
 class ProfileImageSection extends StatefulWidget {
   final String? imagePath;
-  final ValueChanged<String?> onImageChanged; // Callback for image change
+  final ValueChanged<String?> onImageChanged;
 
   const ProfileImageSection({Key? key, this.imagePath, required this.onImageChanged}) : super(key: key);
 
@@ -18,6 +19,14 @@ class ProfileImageSection extends StatefulWidget {
 
 class _ProfileImageSectionState extends State<ProfileImageSection> {
   bool _isLoading = false;
+  String? _currentImagePath;
+
+  @override
+  void initState() {
+    super.initState();
+    // Set the initial image path
+    _currentImagePath = widget.imagePath;
+  }
 
   Future<void> _pickImage(BuildContext context) async {
     final ImagePicker _picker = ImagePicker();
@@ -28,21 +37,24 @@ class _ProfileImageSectionState extends State<ProfileImageSection> {
       });
 
       final ProfileImageService profileImageService = ProfileImageService();
-      bool success = await profileImageService.changeProfileImage(image.path);
+      String? newImagePath = await profileImageService.changeProfileImage(image.path);
 
       setState(() {
         _isLoading = false;
       });
 
-      if (success) {
-        widget.onImageChanged(image.path);
+      if (newImagePath != null) {
+        setState(() {
+          _currentImagePath = newImagePath; // تحديث مسار الصورة بالرابط الجديد
+        });
+        widget.onImageChanged(newImagePath);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('فشل في تغيير الصورة'),
+          ),
+        );
       }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(success ? 'تم تغيير الصورة بنجاح' : 'فشل في تغيير الصورة'),
-        ),
-      );
     }
   }
 
@@ -62,12 +74,12 @@ class _ProfileImageSectionState extends State<ProfileImageSection> {
             ),
           ),
           child: ClipOval(
-            child: widget.imagePath != null
+            child: _currentImagePath != null && _currentImagePath!.isNotEmpty
                 ? Stack(
                     fit: StackFit.expand,
                     children: [
                       Image.network(
-                       widget.imagePath!,
+                      baseUrl+  _currentImagePath!,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Icon(
@@ -77,13 +89,13 @@ class _ProfileImageSectionState extends State<ProfileImageSection> {
                           );
                         },
                       ),
-                      AnimatedOpacity(
-                        opacity: _isLoading ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 300),
-                        child: Center(
-                          child: Lottie.asset(AssetImages.loading),
+                      if (_isLoading)
+                        Center(
+                          child: Lottie.asset(
+                            AssetImages.loading,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
                     ],
                   )
                 : Icon(

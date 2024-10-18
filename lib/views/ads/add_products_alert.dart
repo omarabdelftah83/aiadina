@@ -47,7 +47,6 @@ void addAds(BuildContext context) {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Title and close button
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -68,7 +67,6 @@ void addAds(BuildContext context) {
                           ),
                           const SizedBox(height: 20),
 
-                          // Loading indicator or dropdown
                           controller.isLoading
                               ? Center(
                                   child: Lottie.asset(
@@ -87,7 +85,6 @@ void addAds(BuildContext context) {
                                 ),
                           const SizedBox(height: 20),
 
-                          // Title and description fields
                           AuthTextFormField(
                             label: Strings.nameProduct,
                             height: 60.h,
