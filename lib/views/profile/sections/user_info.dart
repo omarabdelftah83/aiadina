@@ -6,7 +6,7 @@ import '../../../services/update_data_user.dart';
 import '../../../utils/colors.dart';
 import '../../../widgets/custom/custom_button.dart';
 
-class UserInfoSection extends StatelessWidget {
+class UserInfoSection extends StatefulWidget {
   final TextEditingController nameController;
   final TextEditingController phoneController;
   final TextEditingController emailController;
@@ -20,6 +20,11 @@ class UserInfoSection extends StatelessWidget {
     required this.userId,
   }) : super(key: key);
 
+  @override
+  State<UserInfoSection> createState() => _UserInfoSectionState();
+}
+
+class _UserInfoSectionState extends State<UserInfoSection> {
   // Initialize the controller
   final UserInfoController _userInfoController = Get.put(UserInfoController());
 
@@ -46,11 +51,11 @@ class UserInfoSection extends StatelessWidget {
             style: FontStyles.font16Weight400Text,
           ),
           SizedBox(height: 16.h),
-          _buildTextField('الاسم', nameController),
+          _buildTextField('الاسم', widget.nameController),
           SizedBox(height: 16.h),
-          _buildTextField('رقم الهاتف', phoneController),
+          _buildTextField('رقم الهاتف', widget.phoneController),
           SizedBox(height: 16.h),
-          _buildTextField('البريد الإلكتروني', emailController),
+          _buildTextField('البريد الإلكتروني', widget.emailController),
           SizedBox(height: 20.h), // Added spacing before the button
           _buildUpdateButton(context),
         ],
@@ -78,16 +83,16 @@ class UserInfoSection extends StatelessWidget {
         text: 'تحديث',
         onTap: () async {
           final userService = UserService();
-          final name = nameController.text.isNotEmpty ? nameController.text : null;
-          final phone = phoneController.text.isNotEmpty ? phoneController.text : null;
-          final email = emailController.text.isNotEmpty ? emailController.text : null;
+          final name = widget.nameController.text.isNotEmpty ? widget.nameController.text : null;
+          final phone = widget.phoneController.text.isNotEmpty ? widget.phoneController.text : null;
+          final email = widget.emailController.text.isNotEmpty ? widget.emailController.text : null;
 
           // Start loading state
           _userInfoController.setLoading(true);
 
           // Call the update function
           final success = await userService.updateUser(
-            userId: userId,
+            userId: widget.userId,
             name: name,
             phone: phone,
             email: email,
@@ -99,8 +104,9 @@ class UserInfoSection extends StatelessWidget {
               : 'فشل تحديث المعلومات';
           _showSnackBar(context, message);
 
-          // Stop loading state
-          _userInfoController.setLoading(false);
+ setState(() {
+                          
+                        });          _userInfoController.setLoading(false);
         },
         height: 50.h, // Set button height
         isLoading: _userInfoController.isLoading.value, // React to loading state

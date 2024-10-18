@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
+import 'package:get/get.dart';
 import 'package:ourhands/utils/images.dart';
 import '../../../utils/colors.dart';
 import '../../../services/profile_image_service.dart';
@@ -20,6 +21,7 @@ class ProfileImageSection extends StatefulWidget {
 class _ProfileImageSectionState extends State<ProfileImageSection> {
   bool _isLoading = false;
   String? _currentImagePath;
+  File? _imageFile;
 
   @override
   void initState() {
@@ -34,6 +36,7 @@ class _ProfileImageSectionState extends State<ProfileImageSection> {
     if (image != null) {
       setState(() {
         _isLoading = true;
+        _imageFile = File(image.path);
       });
 
       final ProfileImageService profileImageService = ProfileImageService();
@@ -46,13 +49,17 @@ class _ProfileImageSectionState extends State<ProfileImageSection> {
       if (newImagePath != null) {
         setState(() {
           _currentImagePath = newImagePath; // تحديث مسار الصورة بالرابط الجديد
+          _imageFile = File(image.path); // تعيين الصورة الجديدة
         });
         widget.onImageChanged(newImagePath);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('فشل في تغيير الصورة'),
-          ),
+        Get.snackbar(
+          'تم', // العنوان
+          'تم تغيير الصورة بنجاح', // المحتوى
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: Duration(seconds: 3),
         );
       }
     }
@@ -74,12 +81,14 @@ class _ProfileImageSectionState extends State<ProfileImageSection> {
             ),
           ),
           child: ClipOval(
-            child: _currentImagePath != null && _currentImagePath!.isNotEmpty
-                ? Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image.network(
-                      baseUrl+  _currentImagePath!,
+            child: _imageFile != null
+                ? Image.file(
+                    _imageFile!,
+                    fit: BoxFit.cover,
+                  )
+                : (_currentImagePath != null && _currentImagePath!.isNotEmpty)
+                    ? Image.network(
+                        baseUrl + _currentImagePath!,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Icon(
@@ -88,21 +97,12 @@ class _ProfileImageSectionState extends State<ProfileImageSection> {
                             color: AppColors.actionButton,
                           );
                         },
+                      )
+                    : Icon(
+                        Icons.person_3_rounded,
+                        size: 80,
+                        color: AppColors.actionButton,
                       ),
-                      if (_isLoading)
-                        Center(
-                          child: Lottie.asset(
-                            AssetImages.loading,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                    ],
-                  )
-                : Icon(
-                    Icons.person_3_rounded,
-                    size: 80,
-                    color: AppColors.actionButton,
-                  ),
           ),
         ),
         Positioned(

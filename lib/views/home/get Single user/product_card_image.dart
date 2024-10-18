@@ -9,32 +9,53 @@ class ProductCardImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return imageUrls.isNotEmpty ?SizedBox(
-      height: 100, 
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: imageUrls.length,
-        itemBuilder: (context, index) {
-        final String imageUrl =  imageUrls[index];
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: InkWell(
-              onTap: () {
-                showFullImage(context, imageUrls[index]);
+    return imageUrls.isNotEmpty
+        ? SizedBox(
+            height: 100,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: imageUrls.length,
+              itemBuilder: (context, index) {
+                final String imageUrl = imageUrls[index];
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                    onTap: () {
+                      showFullImage(context, imageUrls[index]);
+                    },
+                    child: Image.network(
+                      imageUrl,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child; // إذا تم تحميل الصورة، اعرضها
+                        } else {
+                          return Center(
+                            child: Lottie.asset(
+                              AssetImages.loading,
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        }
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Center(child: Icon(Icons.error));
+                      },
+                    ),
+                  ),
+                );
               },
-              child: Image.network( imageUrl,),
+            ),
+          )
+        : Center(
+            child: Lottie.asset(
+              AssetImages.noData,
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
             ),
           );
-        },
-      ),
-    ): Center(
-          child: Lottie.asset(
-            AssetImages.noData,
-            width: 100,
-            height: 100,
-            fit: BoxFit.cover,
-          ),
-        );
   }
 
   void showFullImage(BuildContext context, String imageUrl) {
@@ -66,6 +87,20 @@ class ImageContainer extends StatelessWidget {
         child: Image.network(
           imagePath,
           fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) {
+              return child;
+            } else {
+              return Center(
+                child: Lottie.asset(
+                  AssetImages.loading,
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.cover,
+                ),
+              );
+            }
+          },
           errorBuilder: (context, error, stackTrace) {
             return const Center(child: Icon(Icons.error));
           },
@@ -83,7 +118,26 @@ class FullImageDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: Image.network(imageUrl),
+      child: Image.network(
+        imageUrl,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) {
+            return child;
+          } else {
+            return Center(
+              child: Lottie.asset(
+                AssetImages.loading,
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+              ),
+            );
+          }
+        },
+        errorBuilder: (context, error, stackTrace) {
+          return const Center(child: Icon(Icons.error));
+        },
+      ),
     );
   }
 }

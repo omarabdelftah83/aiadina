@@ -27,28 +27,33 @@ class UserPosts extends StatelessWidget {
                     width: 80,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8.0),
-                      child: Image.network(
-                        imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Center(
-                            child: Lottie.asset(
-                              AssetImages.noData,
-                              width: 80,
-                              height: 80,
-                            ),
-                          );
+                      child: InkWell(
+                        onTap: () {
+                          showFullImage(context, imageUrl);
                         },
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-              child: Lottie.asset(
-                AssetImages.loading,
-                width: 250,
-                height: 250,
-              ),
-            );
-                        },
+                        child: Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Center(
+                              child: Lottie.asset(
+                                AssetImages.noData,
+                                width: 80,
+                                height: 80,
+                              ),
+                            );
+                          },
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: Lottie.asset(
+                                AssetImages.loading,
+                                width: 250,
+                                height: 250,
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ),
@@ -62,6 +67,39 @@ class UserPosts extends StatelessWidget {
                 height: 250,
               ),
             ),
+    );
+  }
+
+  void showFullImage(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Center(
+                child: Lottie.asset(
+                  AssetImages.noData,
+                  width: 250,
+                  height: 250,
+                ),
+              );
+            },
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: Lottie.asset(
+                  AssetImages.loading,
+                  width: 250,
+                  height: 250,
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

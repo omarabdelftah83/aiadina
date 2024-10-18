@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ourhands/onbording_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
 import '../../models/user_model_register.dart';
 import '../../services/login_service.dart';
+import '../../views/auth/login_screen.dart';
 import '../../views/home/home_page.dart';
 
  class LoginController extends GetxController {
@@ -87,7 +89,23 @@ import '../../views/home/home_page.dart';
   }
 }
 
-  // Method to cache the user ID and token
+Future<void> logOut() async {
+    try {
+      // Clear cached data
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+
+      Get.offAll(() => const OnBording());
+    } catch (e) {
+      Get.snackbar(
+        'خطأ',
+        'فشل في تسجيل الخروج. حاول مرة أخرى.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
   Future<void> cacheUserData(String userId, String token) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('userId', userId);  

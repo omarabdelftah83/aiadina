@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../controllers/auth_conntroller/restore_password_controller.dart';
 import '../../../models/get_single_user.dart';
+import '../../../services/password_recovery_service.dart';
 import '../../../widgets/app_text/AppText.dart';
 import '../../../widgets/custom/custom_button.dart';
 import '../../../widgets/shared/auth_custom_text_filed.dart';
@@ -40,7 +41,7 @@ class PasswordChangeSection extends StatelessWidget {
 
   void _showPasswordChangeDialog(BuildContext context) {
     final formKey = GlobalKey<FormState>();
-    final PasswordRecoveryController passwordRecoveryController = Get.find<PasswordRecoveryController>();
+    final PasswordRecoveryController passwordRecoveryController = Get.put(PasswordRecoveryController(PasswordRecoveryService()));
 
     showDialog(
       context: context,
@@ -99,34 +100,25 @@ class PasswordChangeSection extends StatelessWidget {
               ),
             ),
             actions: [
-             /*  TextButton(
-                onPressed: () {
-                  Get.back(); // Close the dialog
-                },
-                child: const Text('إلغاء'),
-              ).animate().fade(delay: 500.ms),  */// Fade-in animation for cancel button
+            
               CustomButton(
                 height: 60.h,
                 text: 'تغيير كلمة المرور',
                 onTap: () async {
                   if (formKey.currentState!.validate()) {
                     try {
-                      // Call the reset password service
                       await passwordRecoveryController.resetPasswordSettings(userData!.email);
 
-                      // Show success message
                       showSnackbar('نجاح', 'تم تغيير كلمة المرور بنجاح', isSuccess: true);
-                      Get.back(); // Close the dialog after success
+                      Get.back(); 
                     } catch (error) {
-                      // Handle any errors during the service call
                       showSnackbar('خطأ', 'حدث خطأ أثناء تغيير كلمة المرور. يرجى المحاولة لاحقاً', isSuccess: false);
                     }
                   } else {
-                    // If form validation fails
                     showSnackbar('خطأ', 'يرجى التأكد من صحة كلمة المرور', isSuccess: false);
                   }
                 },
-              ).animate().scale(delay: 600.ms), // Scale animation for submit button
+              ).animate().scale(delay: 600.ms), 
             ],
           ),
         );
