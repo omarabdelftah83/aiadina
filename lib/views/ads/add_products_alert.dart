@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -19,7 +18,34 @@ import '../../widgets/text_failed/drop_down_custom_textfailed.dart';
 import '../../widgets/custom/custom_button.dart';
 import '../home/seller_page.dart';
 
+class ImageDisplayPage extends StatelessWidget {
+  final String imagePath;
+
+  ImageDisplayPage({required this.imagePath});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+
+      body: Center(
+        child: Container(
+          height: 400,
+          width: 300,
+          child: Image.asset(
+            imagePath,
+            fit: BoxFit.contain,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 void addAds(BuildContext context) {
+  final titleController = TextEditingController();
+  final descriptionController = TextEditingController();
+  String? imagePath; // متغير لتخزين مسار الصورة
+
   showDialog(
     context: context,
     barrierDismissible: false,
@@ -28,8 +54,6 @@ void addAds(BuildContext context) {
         create: (context) => AddAdsController(),
         child: Consumer<AddAdsController>(
           builder: (context, controller, child) {
-            final titleController = TextEditingController();
-            final descriptionController = TextEditingController();
             final LoginController controllerForID = getIt<LoginController>();
 
             return LayoutBuilder(
@@ -69,20 +93,20 @@ void addAds(BuildContext context) {
 
                           controller.isLoading
                               ? Center(
-                                  child: Lottie.asset(
-                                    AssetImages.loading,
-                                    width: 60,
-                                    height: 60,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
+                            child: Lottie.asset(
+                              AssetImages.loading,
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.cover,
+                            ),
+                          )
                               : DropDownCustomTextfailed(
-                                  hintText: 'اختر القسم',
-                                  dropdownItems: controller.dropdownItems,
-                                  onDropdownChanged: (selectedItem) {
-                                    controller.selectedJob.value = selectedItem;
-                                  },
-                                ),
+                            hintText: 'اختر القسم',
+                            dropdownItems: controller.dropdownItems,
+                            onDropdownChanged: (selectedItem) {
+                              controller.selectedJob.value = selectedItem;
+                            },
+                          ),
                           const SizedBox(height: 20),
 
                           AuthTextFormField(
@@ -192,63 +216,78 @@ void addAds(BuildContext context) {
                             ),
                           ),
                           const SizedBox(height: 20),
-                        CustomButton(
-  text: 'اضف اعلان',
-  onTap: () async {
-    String title = titleController.text.trim();
-    String description = descriptionController.text.trim();
-    String? userId = await controllerForID.getCachedUserId();
-    if (title.isEmpty) {
-      Get.snackbar(
-        "خطأ",
-        "يرجى إدخال عنوان الإعلان",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return;
-    }
+                          CustomButton(
+                            text: 'اضف اعلان',
+                            onTap: () async {
+                              String title = titleController.text.trim();
+                              String description = descriptionController.text.trim();
+                              String? userId = await controllerForID.getCachedUserId();
 
-    if (description.length < 10) {
-      Get.snackbar(
-        "خطأ",
-        "يجب أن يكون الوصف على الأقل 10 أحرف.",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.shade400,
-        colorText: Colors.white,
-      );
-      return;
-    }
+                              if (title.isEmpty) {
+                                Get.snackbar(
+                                  "خطأ",
+                                  "يرجى إدخال عنوان الإعلان",
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white,
+                                );
+                                return;
+                              }
 
-    if (controller.selectedJob.value == null) {
-      Get.snackbar(
-        "خطأ",
-        "يرجى اختيار وظيفة.",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.shade400,
-        colorText: Colors.white,
-      );
-      return;
-    }
+                              if (description.length < 10) {
+                                Get.snackbar(
+                                  "خطأ",
+                                  "يجب أن يكون الوصف على الأقل 10 أحرف.",
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.red.shade400,
+                                  colorText: Colors.white,
+                                );
+                                return;
+                              }
 
-    if (controller.images.isEmpty) {
-      Get.snackbar(
-        "خطأ",
-        "يرجى إضافة صورة للإعلان.",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.shade400,
-        colorText: Colors.white,
-      );
-      return;
-    }
+                              if (controller.selectedJob.value == null) {
+                                Get.snackbar(
+                                  "خطأ",
+                                  "يرجى اختيار وظيفة.",
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.red.shade400,
+                                  colorText: Colors.white,
+                                );
+                                return;
+                              }
 
-    await controller.createAd(title, description, controller.selectedJob.value!);
-    Get.to(() => SellerPage(userID: userId!));
-  },
-  width: 310.w,
-  height: 50.h,
-),
+                              if (controller.images.isEmpty) {
+                                Get.snackbar(
+                                  "خطأ",
+                                  "يرجى إضافة صورة للإعلان.",
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.red.shade400,
+                                  colorText: Colors.white,
+                                );
+                                return;
+                              }
 
+                              // إضافة الإعلان
+                              await controller.createAd(title, description, controller.selectedJob.value!);
+
+                              // عرض الصورة في صفحة جديدة
+                              imagePath = 'assets/images/framee.png'; // تخزين مسار الصورة الأولى
+
+                              // الانتقال إلى صفحة عرض الصورة
+                              Get.off(() => ImageDisplayPage(imagePath: imagePath!));
+
+                              // إغلاق Dialog بعد ثانيتين
+                              await Future.delayed(Duration(seconds: 2));
+
+
+                              Get.offAll(() => SellerPage(userID: userId!));
+
+                              // إغلاق Dialog
+                              Navigator.of(context).pop();
+                            },
+                            width: 310.w,
+                            height: 50.h,
+                          ),
                         ],
                       ),
                     ),

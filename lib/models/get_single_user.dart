@@ -146,7 +146,7 @@ class Post {
   String? title;
   String? description;
   User? user;
-   ImageModel? images; // Modified to List<ImagesE>
+  List<ImageModel>? images; // Modified to handle a list of images
   List<String>? likes;
   String? job;
   String? createdAt;
@@ -159,7 +159,7 @@ class Post {
     this.title,
     this.description,
     this.user,
-    this.images, 
+    this.images, // Updated to a list
     this.likes,
     this.job,
     this.createdAt,
@@ -174,7 +174,7 @@ class Post {
       title: json['title'] as String?,
       description: json['description'] as String?,
       user: json['user'] != null ? User.fromJson(json['user']) : null,
-      images: ImageModel.fromJson(json['image']),
+      images: (json['image'] as List?)?.map((i) => ImageModel.fromJson(i)).toList(), // Modified to handle list of images
       likes: json['likes'] != null ? List<String>.from(json['likes']) : null,
       job: json['job'] as String?,
       createdAt: json['createdAt'] as String?,
@@ -191,16 +191,18 @@ class Post {
 }
 
 class ImageModel {
+  String? id; // Add 'id' field if necessary
   String? url;
 
-  ImageModel({this.url});
+  ImageModel({this.id, this.url});
 
   factory ImageModel.fromJson(Map<String, dynamic> json) {
     return ImageModel(
+      id: json['_id'] as String?,
       url: json['url'] as String?,
     );
   }
 
   @override
-  String toString() => 'Image(url: $url)';
+  String toString() => 'ImageModel(id: $id, url: $url)';
 }

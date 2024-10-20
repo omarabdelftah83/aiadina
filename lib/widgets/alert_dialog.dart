@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ourhands/utils/font_styles.dart';
 import 'package:ourhands/utils/images.dart';
-import '../utils/strings.dart';
+import 'package:ourhands/utils/strings.dart';
 
 void showCustomDialog(BuildContext context) {
   showDialog(
@@ -28,16 +28,15 @@ void showCustomDialog(BuildContext context) {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(AssetImages.alert), 
+                Image.asset(AssetImages.alert),
                 const SizedBox(height: 20),
                 FittedBox(
                   child: Text(
-                    Strings.alerText, 
+                    Strings.alerText,
                     style: FontStyles.font16WeightBoldText,
                     textAlign: TextAlign.center,
                   ),
                 ),
-               
               ],
             ),
           ),
@@ -45,6 +44,10 @@ void showCustomDialog(BuildContext context) {
       );
     },
   );
+
+  // إغلاق الـ Dialog بعد 3 ثواني
+  Future.delayed(Duration(seconds: 2), () {
+    Navigator.of(context).pop();
+    print("Dialog closed"); // لطباعة رسالة عند الإغلاق
+  });
 }
-
-

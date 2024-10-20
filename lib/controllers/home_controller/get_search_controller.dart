@@ -45,8 +45,4 @@ class HomeController extends GetxController {
   void updateSelectedCity(String value) {
     selectedCity.value = value;
   }
-
-
-
-
 }

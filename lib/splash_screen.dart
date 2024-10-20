@@ -18,8 +18,6 @@ class _SplashScreenState extends State<SplashScreen> {
   }
      Future<void> _checkUserStatus() async {
     await Future.delayed(const Duration(seconds: 1), () {
-      
-
       Future.delayed(const Duration(seconds: 1), () async {
         final token = CacheHelper.getToken();
         if (token != null) {
@@ -30,15 +28,14 @@ class _SplashScreenState extends State<SplashScreen> {
       });
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: SizedBox(
-          height: 80,
-          width: 80,
+          height: 300,
+          width: 300,
           child: Image.asset(
             AssetImages.iconApp,
             width: MediaQuery.of(context).size.width,  

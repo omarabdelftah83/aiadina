@@ -2,7 +2,7 @@ class UserSearchResponse {
   final String status;
   final String message;
   final List<String> locations;
-  final List<String?> jobs;
+  final List<String> jobs;
   final List<String> cities;
 
   UserSearchResponse({
@@ -18,7 +18,7 @@ class UserSearchResponse {
       status: json['status'] ?? '',
       message: json['message'] ?? '',
       locations: List<String>.from(json['locations'] ?? []),
-      jobs: List<String?>.from(json['jobs'] ?? []),
+      jobs: List<String>.from(json['jobs'] ?? []),
       cities: List<String>.from(json['cities'] ?? []),
     );
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:ourhands/views/home/home_page.dart';
+import 'package:ourhands/views/profile/page_loading.dart';
 import '../../controllers/user_single_controller/get_single_user__controller.dart';
 import '../../models/get_single_user.dart';
 import '../../services/get_single_user.dart';
@@ -93,7 +95,8 @@ class _SellerPageState extends State<SellerPage> {
                           size: 22,
                         ),
                         onPressed: () {
-                          Get.back();
+                          Get.to(() => HomePage());
+
                         },
                       ),
                     ],

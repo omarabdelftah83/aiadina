@@ -87,6 +87,8 @@ class _AuthTextFormFieldState extends State<AuthTextFormField> {
                 enabled: widget.enabled,
                 onChanged: widget.onChanged, // Set onChanged
                 decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(
+                      vertical: 10.0, horizontal: 20.0),
                   hintText: widget.hintText,
                   suffixIcon: widget.obSecureText
                       ? IconButton(

@@ -16,8 +16,12 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String? imageUrls = item.images?.url != null ? baseUrl + item.images!.url! : null;
-    print('Full Image URL: $imageUrls'); 
+    // Map each image URL from the images list
+    final List<String> imageUrls = item.images != null
+        ? item.images!.map((image) => baseUrl + image.url!).toList()
+        : [];
+
+    print('Full Image URLs: $imageUrls'); // Debugging: printing the image URLs
 
     return Card(
       shape: RoundedRectangleBorder(
@@ -32,7 +36,8 @@ class ProductCard extends StatelessWidget {
           children: [
             _buildHeader(),
             const SizedBox(height: 8),
-        ProductCardImage(imageUrls: imageUrls != null ? [imageUrls] : []),
+            // Pass the list of image URLs to the ProductCardImage widget
+            ProductCardImage(imageUrls: imageUrls),
             ProductCardComments(onTap: () {
               CommentsDialog.show(context, item.id!);
             }),

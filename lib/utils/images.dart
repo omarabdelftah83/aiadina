@@ -9,7 +9,7 @@ class AssetImages {
   static const String noData = "assets/images/noData.json";
   static const String noImage = "assets/images/noImage.json";
   static const String noUser = "assets/images/noUser.json";
-  static const String iconApp = "assets/images/iconApp.png";
+  static const String iconApp = "assets/images/Asset(2).png";
   static const String noInternet = "assets/images/noInternet.json";
 
 }
