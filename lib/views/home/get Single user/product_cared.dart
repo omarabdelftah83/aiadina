@@ -7,11 +7,20 @@ import 'comments_dialog.dart';
 import 'product_card_image.dart';
 import 'product_card_comments.dart';
 
+import 'package:shimmer/shimmer.dart';
+
+import 'package:shimmer/shimmer.dart';
+
 class ProductCard extends StatelessWidget {
   final Post item;
+  final Function onDelete; // Callback function for deletion
+  final bool isDeleting; // New parameter for loading state
+
   const ProductCard({
     Key? key,
     required this.item,
+    required this.onDelete, // Receive the delete function
+    required this.isDeleting, // Receive the loading state
   }) : super(key: key);
 
   @override
@@ -21,27 +30,93 @@ class ProductCard extends StatelessWidget {
         ? item.images!.map((image) => baseUrl + image.url!).toList()
         : [];
 
-    print('Full Image URLs: $imageUrls'); // Debugging: printing the image URLs
+    return Stack(
+      children: [
+        isDeleting
+            ? _buildShimmerEffect() // Show shimmer if isDeleting is true
+            : Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+            side: const BorderSide(color: Colors.grey, width: 0.1),
+          ),
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          elevation: 3,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                _buildHeader(),
+                const SizedBox(height: 8),
+                ProductCardImage(imageUrls: imageUrls),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: ProductCardComments(onTap: () {
+                        CommentsDialog.show(context, item.id!);
+                      }),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete, color: Colors.redAccent), // Delete icon
+                      onPressed: () {
+                        onDelete(item.id!); // Call the delete function
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-        side: const BorderSide(color: Colors.grey, width: 0.1),
-      ),
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      elevation: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            _buildHeader(),
-            const SizedBox(height: 8),
-            // Pass the list of image URLs to the ProductCardImage widget
-            ProductCardImage(imageUrls: imageUrls),
-            ProductCardComments(onTap: () {
-              CommentsDialog.show(context, item.id!);
-            }),
-          ],
+  // Shimmer Effect
+  Widget _buildShimmerEffect() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          side: const BorderSide(color: Colors.grey, width: 0.1),
+        ),
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        elevation: 3,
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                height: 20.0,
+                color: Colors.white, // For shimmer effect on title
+              ),
+              const SizedBox(height: 8),
+              Container(
+                width: double.infinity,
+                height: 150.0,
+                color: Colors.white, // For shimmer effect on image
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: 80.0,
+                    height: 20.0,
+                    color: Colors.white, // For shimmer effect on comments
+                  ),
+                  Container(
+                    width: 40.0,
+                    height: 40.0,
+                    color: Colors.white, // For shimmer effect on delete icon
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -20,7 +20,6 @@ class CustomCaredSearchResult extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return SizedBox(
-    
       width: screenWidth * 0.9,
       child: Card(
         color: Colors.white,
@@ -39,12 +38,11 @@ class CustomCaredSearchResult extends StatelessWidget {
                   Expanded(
                     child: Row(
                       children: [
-                       
                         Flexible(
                           child: CustomText(
                             text: (userData.posts != null &&
-                                    userData.posts!.isNotEmpty &&
-                                    userData.posts![0].user != null)
+                                userData.posts!.isNotEmpty &&
+                                userData.posts![0].user != null)
                                 ? userData.posts![0].user!.phone ?? '0123456789'
                                 : 'لا يوجد رقم هاتف متاح',
                             textColor: Colors.grey,
@@ -57,54 +55,53 @@ class CustomCaredSearchResult extends StatelessWidget {
                     children: [
                       CustomText(
                         text: (userData.posts != null &&
-                                userData.posts!.isNotEmpty &&
-                                userData.posts![0].user != null)
+                            userData.posts!.isNotEmpty &&
+                            userData.posts![0].user != null)
                             ? userData.posts![0].user!.name ?? 'مستخدم غير معروف'
                             : 'لا يوجد اسم مستخدم متاح',
                         fontSize: screenWidth * 0.035,
                         fontWeight: FontWeight.w500,
                       ),
                       SizedBox(width: screenWidth * 0.02),
-                   InkWell(
-                     onTap: () {
-  if (userData.posts != null && userData.posts!.isNotEmpty) {
-    Get.to(() => SellerPage(userID: userData.posts![0].user!.id!));
-    print("Navigating to SellerPage with userID: ${userData.posts![0].user!.id}");
-
-  }
-},
-                     child: CircleAvatar(
-                                 radius: screenWidth * 0.05,
-                                 backgroundColor: Colors.grey[200],
-                                 child: userData.images != null && userData.images!.isNotEmpty
-                                     ? ClipOval(
-                      child: Image.network(
-                       baseUrl+ userData.images![0],
-                        fit: BoxFit.cover,
-                        width: 100, 
-                        height: 100, 
-                        errorBuilder: (context, error, stackTrace) {
-                          return Center(
+                      InkWell(
+                        onTap: () {
+                          if (userData.posts != null && userData.posts!.isNotEmpty) {
+                            Get.to(() => SellerPage(userID: userData.posts![0].user!.id!));
+                            print("Navigating to SellerPage with userID: ${userData.posts![0].user!.id}");
+                          }
+                        },
+                        child: CircleAvatar(
+                          radius: screenWidth * 0.05,
+                          backgroundColor: Colors.grey[200],
+                          child: userData.images != null && userData.images!.isNotEmpty
+                              ? ClipOval(
+                            child: Image.network(
+                              baseUrl + userData.images![0].url!, // تعديل هنا
+                              fit: BoxFit.cover,
+                              width: 100,
+                              height: 100,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Center(
+                                  child: Lottie.asset(
+                                    AssetImages.noImage,
+                                    width: 60,
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                              : Center(
                             child: Lottie.asset(
                               AssetImages.noImage,
                               width: 60,
                               height: 60,
                               fit: BoxFit.cover,
                             ),
-                          );
-                        },
+                          ),
+                        ),
                       ),
-                                       )
-                                     : Center(
-                      child: Lottie.asset(
-                        AssetImages.noImage,
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.cover,
-                      ),
-                                       ),
-                               ),
-                   ),
                     ],
                   ),
                 ],
@@ -146,19 +143,17 @@ class CustomCaredSearchResult extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 20.h),
-             CustomText(
-      text: '${(userData.posts != null && userData.posts!.isNotEmpty && userData.posts![0].user != null) 
-    ? userData.posts![0].user!.name ?? 'هذا المستخدم'
-    : 'هذا المستخدم'}  بعض الأعمال السابقة لـ',
-    ),
-    
+              CustomText(
+                text: '${(userData.posts != null && userData.posts!.isNotEmpty && userData.posts![0].user != null)
+                    ? userData.posts![0].user!.name ?? 'هذا المستخدم'
+                    : 'هذا المستخدم'}  بعض الأعمال السابقة لـ',
+              ),
               SizedBox(height: 10.h),
-          UserPosts(images: userData.images ?? [])
-    
+              UserPosts(images: userData.images?.map((image) => image.url!).toList() ?? []), // تعديل هنا
             ],
           ),
         ),
       ),
     );
   }
-} 
+}

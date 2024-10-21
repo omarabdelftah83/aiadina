@@ -33,3 +33,33 @@ class GetSingleUser {
     }
   }
 }
+class DeleteItem{
+  Future<UserResponse> deleteItem(String userId) async {
+    final String getSingleUserUrl = '$baseUrl/api/v1/posts/$userId';
+    String? token = CacheHelper.getToken();
+
+    if (token == null || token.isEmpty) {
+      throw Exception('Token not found');
+    }
+
+    print('Fetching user data from $getSingleUserUrl');
+
+    final response = await http.delete(
+      Uri.parse(getSingleUserUrl),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    print('Response status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      return UserResponse.fromJson(jsonDecode(response.body));
+    } else {
+      print('Error: Failed to load user data: ${response.statusCode}');
+      throw Exception('Failed to load user data: ${response.statusCode}');
+    }
+  }
+
+}

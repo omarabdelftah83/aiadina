@@ -18,7 +18,7 @@ void main() async{
   getIt.registerLazySingleton<HomeController>(() => HomeController());
   setupDependencyInjection();
   Get.put(ConnectivityController());
-   Get.lazyPut(() => SearchService()); 
+  Get.lazyPut(() => SearchService());
   Get.lazyPut(() => SearchHomeController(Get.find<SearchService>()));
   runApp(const MyApp());
 }

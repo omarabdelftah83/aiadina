@@ -24,7 +24,7 @@ class SellerPage extends StatefulWidget {
 
 class _SellerPageState extends State<SellerPage> {
   late UserController userController;
-
+  Map<String, bool> isDeletingMap = {}; // لتتبع حالة التحميل لكل عنصر
   @override
   void initState() {
     super.initState();
@@ -37,7 +37,26 @@ class _SellerPageState extends State<SellerPage> {
       userController.fetchUserData();
     });
   }
+  void _deleteItem(String postId) async {
+    setState(() {
+      isDeletingMap[postId] = true; // تعيين حالة التحميل للعنصر
+    });
 
+    try {
+      await DeleteItem().deleteItem(postId);
+      setState(() {
+        // تحديث واجهة المستخدم بعد حذف العنصر
+        userController.userResponse.value.data?.user?.posts?.removeWhere((post) => post.id == postId);
+        isDeletingMap.remove(postId); // إزالة حالة التحميل بعد الانتهاء
+      });
+      Get.snackbar('Success', 'Item deleted successfully');
+    } catch (e) {
+      setState(() {
+        isDeletingMap.remove(postId); // إزالة حالة التحميل إذا حدث خطأ
+      });
+      Get.snackbar('Error', 'Failed to delete item');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,7 +115,6 @@ class _SellerPageState extends State<SellerPage> {
                         ),
                         onPressed: () {
                           Get.to(() => HomePage());
-
                         },
                       ),
                     ],
@@ -130,7 +148,12 @@ class _SellerPageState extends State<SellerPage> {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: user.posts?.length ?? 0,
                     itemBuilder: (context, index) {
-                      return ProductCard(item: user.posts![index]);
+                      final post = user.posts![index];
+                      return ProductCard(
+                        item: post,
+                        onDelete: _deleteItem, // تمرير دالة الحذف هنا
+                        isDeleting: isDeletingMap[post.id] ?? false, // تمرير حالة التحميل
+                      );
                     },
                   ),
                 ],
