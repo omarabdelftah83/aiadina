@@ -5,6 +5,9 @@ class ConnectivityController extends GetxController {
   final ConnectivityService _connectivityService = ConnectivityService();
   var connectivityStatus = ConnectivityStatus.Offline.obs;
 
+  Stream<ConnectivityStatus> get connectivityStream =>
+      _connectivityService.connectivityStream;
+
   @override
   void onInit() {
     super.onInit();

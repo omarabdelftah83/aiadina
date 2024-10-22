@@ -27,7 +27,10 @@ class VerificationCodePage extends StatelessWidget {
             SizedBox(height: 50.h),
             buildAppBar(),
             SizedBox(height: 30.h),
-            Obx(() => buildPageIndicator(controller.currentPage.value)),
+            GetBuilder<PasswordRecoveryController>(
+              init: controller,
+              builder: (_) => buildPageIndicator(controller.currentPage.value),
+            ),
             SizedBox(height: 30.h),
             Image.asset(AssetImages.otp),
             SizedBox(height: 50.h),
@@ -54,43 +57,49 @@ class VerificationCodePage extends StatelessWidget {
               },
             ),
             const SizedBox(height: 40),
-            Obx(() {
-              return Align(
-                alignment: Alignment.center,
-                child: GestureDetector(
-                  onTap: controller.isResendEnabled.value
-                      ? () {
-                          controller.resendOtp();
-                        }
-                      : null,
-                  child: Text(
-                    controller.isResendEnabled.value
-                        ? Strings.resend
-                        : 'Resend in ${controller.countdownTimer.value}s',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      decoration: TextDecoration.underline,
-                      color: controller.isResendEnabled.value
-                          ? AppColors.actionButton
-                          : Colors.grey,
+            GetBuilder<PasswordRecoveryController>(
+              init: controller,
+              builder: (_) {
+                return Align(
+                  alignment: Alignment.center,
+                  child: GestureDetector(
+                    onTap: controller.isResendEnabled.value
+                        ? () {
+                            controller.resendOtp();
+                          }
+                        : null,
+                    child: Text(
+                      controller.isResendEnabled.value
+                          ? Strings.resend
+                          : 'Resend in ${controller.countdownTimer.value}s',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        decoration: TextDecoration.underline,
+                        color: controller.isResendEnabled.value
+                            ? AppColors.actionButton
+                            : Colors.grey,
+                      ),
                     ),
                   ),
-                ),
-              );
-            }),
+                );
+              },
+            ),
             Padding(
               padding: const EdgeInsets.all(Dimensions.paddingSizeSmall),
-              child: Obx(() {
-                return CustomButton(
-                  height: 60.h,
-                  text: controller.isLoading.value ? 'Verifying...' : Strings.verify,
-                  onTap: controller.isLoading.value
-                      ? () {}
-                      : () {
-                          controller.verifyOtp();
-                        },
-                );
-              }),
+              child: GetBuilder<PasswordRecoveryController>(
+                init: controller,
+                builder: (_) {
+                  return CustomButton(
+                    height: 60.h,
+                    text: controller.isLoading.value ? 'Verifying...' : Strings.verify,
+                    onTap: controller.isLoading.value
+                        ? () {}
+                        : () {
+                            controller.verifyOtp();
+                          },
+                  );
+                },
+              ),
             ),
           ],
         ),

@@ -17,7 +17,6 @@ class CustomCaredSearchResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
 
     return SizedBox(
       width: screenWidth * 0.9,
@@ -41,8 +40,8 @@ class CustomCaredSearchResult extends StatelessWidget {
                         Flexible(
                           child: CustomText(
                             text: (userData.posts != null &&
-                                userData.posts!.isNotEmpty &&
-                                userData.posts![0].user != null)
+                                    userData.posts!.isNotEmpty &&
+                                    userData.posts![0].user != null)
                                 ? userData.posts![0].user!.phone ?? '0123456789'
                                 : 'لا يوجد رقم هاتف متاح',
                             textColor: Colors.grey,
@@ -55,8 +54,8 @@ class CustomCaredSearchResult extends StatelessWidget {
                     children: [
                       CustomText(
                         text: (userData.posts != null &&
-                            userData.posts!.isNotEmpty &&
-                            userData.posts![0].user != null)
+                                userData.posts!.isNotEmpty &&
+                                userData.posts![0].user != null)
                             ? userData.posts![0].user!.name ?? 'مستخدم غير معروف'
                             : 'لا يوجد اسم مستخدم متاح',
                         fontSize: screenWidth * 0.035,
@@ -65,9 +64,12 @@ class CustomCaredSearchResult extends StatelessWidget {
                       SizedBox(width: screenWidth * 0.02),
                       InkWell(
                         onTap: () {
-                          if (userData.posts != null && userData.posts!.isNotEmpty) {
-                            Get.to(() => SellerPage(userID: userData.posts![0].user!.id!));
-                            print("Navigating to SellerPage with userID: ${userData.posts![0].user!.id}");
+                          if (userData.posts != null && userData.posts!.isNotEmpty && userData.posts![0].user != null) {
+                            String uploaderId = userData.posts![0].user!.id!;
+                            Get.to(() => SellerPage(userID: uploaderId));
+                            print("Navigating to SellerPage with userID: $uploaderId");
+                          } else {
+                            print("No valid user found for the post.");
                           }
                         },
                         child: CircleAvatar(
@@ -75,31 +77,31 @@ class CustomCaredSearchResult extends StatelessWidget {
                           backgroundColor: Colors.grey[200],
                           child: userData.images != null && userData.images!.isNotEmpty
                               ? ClipOval(
-                            child: Image.network(
-                              baseUrl + userData.images![0].url!, // تعديل هنا
-                              fit: BoxFit.cover,
-                              width: 100,
-                              height: 100,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Center(
+                                  child: Image.network(
+                                    baseUrl + userData.images![0].url!,
+                                    fit: BoxFit.cover,
+                                    width: 100,
+                                    height: 100,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Center(
+                                        child: Lottie.asset(
+                                          AssetImages.noImage,
+                                          width: 60,
+                                          height: 60,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                )
+                              : Center(
                                   child: Lottie.asset(
                                     AssetImages.noImage,
                                     width: 60,
                                     height: 60,
                                     fit: BoxFit.cover,
                                   ),
-                                );
-                              },
-                            ),
-                          )
-                              : Center(
-                            child: Lottie.asset(
-                              AssetImages.noImage,
-                              width: 60,
-                              height: 60,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                                ),
                         ),
                       ),
                     ],
@@ -130,7 +132,7 @@ class CustomCaredSearchResult extends StatelessWidget {
                     children: [
                       CustomText(
                         text: userData.jobs != null && userData.jobs!.isNotEmpty
-                            ? userData.jobs!.take(1).toString()
+                            ? userData.jobs!.first
                             : 'لا توجد وظيفة',
                         textColor: Colors.grey,
                       ),
@@ -149,7 +151,7 @@ class CustomCaredSearchResult extends StatelessWidget {
                     : 'هذا المستخدم'}  بعض الأعمال السابقة لـ',
               ),
               SizedBox(height: 10.h),
-              UserPosts(images: userData.images?.map((image) => image.url!).toList() ?? []), // تعديل هنا
+              UserPosts(images: userData.images?.map((image) => image.url!).toList() ?? []),
             ],
           ),
         ),

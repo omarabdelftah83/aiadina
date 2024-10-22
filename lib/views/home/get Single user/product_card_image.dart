@@ -27,8 +27,8 @@ class ProductCardImage extends StatelessWidget {
                       imageUrl,
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) {
-                          return child; // إذا تم تحميل الصورة، اعرضها
-                        } else {
+                          return child;
+                        } else { 
                           return Center(
                             child: Lottie.asset(
                               AssetImages.loading,

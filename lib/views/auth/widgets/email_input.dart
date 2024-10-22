@@ -19,12 +19,16 @@ Widget buildEmailInputPage() {
     child: SingleChildScrollView(
       child: Column(
         children: [
-            SizedBox(height: 50.h),
+          SizedBox(height: 50.h),
           buildAppBar(),
           SizedBox(height: 30.h),
-buildPageIndicator(controller.currentPage.value),          SizedBox(height: 30.h),
-       //   Obx(() => Image.asset(AssetImages.reset2)),
-       Image.asset(AssetImages.reset2),
+          GetBuilder<PasswordRecoveryController>(
+            builder: (_) {
+              return buildPageIndicator(controller.currentPage.value);
+            },
+          ),
+          SizedBox(height: 30.h),
+          Image.asset(AssetImages.reset2),
           Center(
             child: Text(
               Strings.enterPhoneNumber,
@@ -37,30 +41,39 @@ buildPageIndicator(controller.currentPage.value),          SizedBox(height: 30.h
             ),
           ),
           const SizedBox(height: 20),
-          AuthTextFormField(
-            label: Strings.email,
-            height: 60.h,
-            controller: controller.emailController,
-            textInputType: TextInputType.emailAddress,
-            hintText: 'ali@gmail.com',
-            enabled: !controller.isLoading.value, 
+          GetBuilder<PasswordRecoveryController>(
+            builder: (_) {
+              return AuthTextFormField(
+                label: Strings.email,
+                height: 60.h,
+                controller: controller.emailController,
+                textInputType: TextInputType.emailAddress,
+                hintText: 'ayadina@gmail.com',
+                enabled: !controller.isLoading.value,
+              );
+            },
           ),
           const SizedBox(height: 40),
-          Obx(() => controller.isLoading.value 
-              ? Center(
+          GetBuilder<PasswordRecoveryController>(
+            builder: (_) {
+              if (controller.isLoading.value) {
+                return Center(
                   child: Lottie.asset(
                     AssetImages.loading,
                     width: 100.w,
                     height: 100.h,
                   ),
-                )
-              : CustomButton(
+                );
+              } else {
+                return CustomButton(
                   height: 60.h,
                   text: Strings.continueButton,
                   onTap: () async {
                     await controller.sendRecoveryEmail();
                   },
-                ),
+                );
+              }
+            },
           ),
         ],
       ),

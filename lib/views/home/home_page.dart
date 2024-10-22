@@ -42,30 +42,26 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _initializePage();
+    connectivityController.connectivityStream.listen((status) {
+      if (status == ConnectivityStatus.Offline) {
+        _showNoInternetDialog();
+      }
+    });
   }
 
   Future<void> _initializePage() async {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       bool hasShownDialog = box.read<bool>('hasShownDialogeask') ?? false;
 
-      // Show confirmation dialog if it hasn't been shown before
       if (!hasShownDialog) {
         showCustomDialog(context);
         box.write('hasShownDialogeask', true);
       }
 
-      // Check internet connectivity
       if (connectivityController.connectivityStatus.value == ConnectivityStatus.Offline) {
-        Get.snackbar(
-          'لا يوجد اتصال بالإنترنت',
-          'الرجاء التحقق من الاتصال بالإنترنت والمحاولة مرة أخرى',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        _showNoInternetDialog();
       }
 
-      // Get user ID and initialize UserController
       final userId = await _getUserId();
       if (userId != null) {
         userController = Get.put(UserController(
@@ -73,7 +69,6 @@ class _HomePageState extends State<HomePage> {
           userId: userId,
         ));
 
-        // Fetch user data after initialization
         userController.fetchUserData();
         setState(() {
           isControllerInitialized = true;
@@ -86,9 +81,26 @@ class _HomePageState extends State<HomePage> {
     return await loginController.getCachedUserId();
   }
 
+  void _showNoInternetDialog() {
+    Get.dialog(
+      AlertDialog(
+        title: const Text('No Internet Connection'),
+        content: const Text('Please check your internet connection and try again.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Get.back();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Check if controller is initialized before building the UI
     if (!isControllerInitialized) {
       return Scaffold(
         body: Center(
@@ -200,94 +212,94 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
- Widget _buildHeader(String userName, String? userImage) {
-  String baseUrl = 'http://194.164.77.238:8002/';
-  String? imagePath;
-  if (userImage != null && userImage.isNotEmpty) {
-    imagePath = userImage.startsWith('/') ? userImage.substring(1) : userImage;
-  }
+  Widget _buildHeader(String userName, String? userImage) {
+    String baseUrl = 'http://194.164.77.238:8002/';
+    String? imagePath;
+    if (userImage != null && userImage.isNotEmpty) {
+      imagePath = userImage.startsWith('/') ? userImage.substring(1) : userImage;
+    }
 
-  return Row(
-    children: [
-      InkWell(
-        onTap: () {
-          Get.to(() => const PageLoading());
-        },
-        child: const CustomText(
-          textColor: Colors.green,
-          text: 'اضف اعلان',
-          fontSize: 18,
-          fontWeight: FontWeight.w400,
+    return Row(
+      children: [
+        InkWell(
+          onTap: () {
+            Get.to(() => const PageLoading());
+          },
+          child: const CustomText(
+            textColor: Colors.green,
+            text: 'اضف اعلان',
+            fontSize: 18,
+            fontWeight: FontWeight.w400,
+          ),
         ),
-      ),
-      const Spacer(),
-      InkWell(
-        onTap: () async {
-          Get.to(() => const ProfilePage());
-        },
-        child: Row(
-          children: [
-            Tooltip(
-              message: 'الذهاب إلى الملف الشخصي',
-              child: CustomText(
-                text: '$userName اهلا يا ',
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
+        const Spacer(),
+        InkWell(
+          onTap: () async {
+            Get.to(() => const ProfilePage());
+          },
+          child: Row(
+            children: [
+              Tooltip(
+                message: 'الذهاب إلى الملف الشخصي',
+                child: CustomText(
+                  text: '$userName اهلا يا ',
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(width: 10.w),
-            Tooltip(
-              message: 'الذهاب إلى الملف الشخصي',
-              child: Column(
-                children: [
-                  ClipOval(
-                    child: imagePath != null
-                        ? Image.network(
-                            baseUrl + imagePath,
-                            fit: BoxFit.cover,
-                            width: 40,
-                            height: 40,
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                child: Lottie.asset(
-                                  AssetImages.loading,
-                                  width: 40,
-                                  height: 40,
-                                ),
-                              );
-                            },
-                            errorBuilder: (context, error, stackTrace) {
-                              return Icon(
-                                Icons.person_3_rounded,
-                                size: 40,
-                                color: AppColors.actionButton,
-                              );
-                            },
-                          )
-                        : Center(
-                            child: Lottie.asset(
-                              AssetImages.loading,
+              SizedBox(width: 10.w),
+              Tooltip(
+                message: 'الذهاب إلى الملف الشخصي',
+                child: Column(
+                  children: [
+                    ClipOval(
+                      child: imagePath != null
+                          ? Image.network(
+                              baseUrl + imagePath,
+                              fit: BoxFit.cover,
                               width: 40,
                               height: 40,
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: Lottie.asset(
+                                    AssetImages.loading,
+                                    width: 40,
+                                    height: 40,
+                                  ),
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) {
+                                return Icon(
+                                  Icons.person_3_rounded,
+                                  size: 40,
+                                  color: AppColors.actionButton,
+                                );
+                              },
+                            )
+                          : Center(
+                              child: Lottie.asset(
+                                AssetImages.loading,
+                                width: 40,
+                                height: 40,
+                              ),
                             ),
-                          ),
-                  ),
-                  SizedBox(height: 4.h),
-                  const Text(
-                    'الملف الشخصي',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
                     ),
-                  ),
-                ],
+                    SizedBox(height: 4.h),
+                    const Text(
+                      'الملف الشخصي',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 }

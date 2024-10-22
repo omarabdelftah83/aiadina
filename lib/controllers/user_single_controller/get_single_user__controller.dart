@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io'; 
 import 'package:get/get.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import '../../models/get_single_user.dart';
 import '../../services/get_single_user.dart';
 
@@ -21,37 +23,44 @@ class UserController extends GetxController {
     fetchUserData();
   }
 
-  Future<UserResponse> fetchUserData() async {
-  try {
-    isLoading(true);
-    print('Fetching user data with user id: $userId');
+  Future<void> fetchUserData() async {
+    try {
+            bool isConnected = await InternetConnectionChecker().hasConnection;
+      if (!isConnected) {
+        errorMessage.value = 'No internet connection. Please check your network and try again.';
+        isLoading(false);
+        return;
+      }
 
-    final response = await userService.fetchUser(userId);
-    userResponse.value = response;
+      isLoading(true);
+      print('Fetching user data with user id: $userId');
 
-    if (response.status?.toLowerCase() == 'success') {
-      errorMessage.value = ''; // Clear any error messages
-      return response; // إرجاع الاستجابة الناجحة
-    } else {
-      errorMessage.value = response.message ?? 'Unknown error';
-      throw Exception(errorMessage.value);
+      final response = await userService.fetchUser(userId);
+      userResponse.value = response;
+
+      if (response.status?.toLowerCase() == 'success') {
+        errorMessage.value = '';
+      } else {
+        errorMessage.value = response.message ?? 'Unknown error occurred';
+      }
+    } on SocketException {
+      errorMessage.value = 'Network error. Please check your internet connection and try again.';
+    } on TimeoutException {
+      errorMessage.value = 'Request timed out. Please try again later.';
+    } catch (e) {
+      print('Error occurred: $e');
+      errorMessage.value = 'Failed to load user data: ${e.toString()}';
+    } finally {
+      isLoading(false);
     }
-  } catch (e) {
-    print('Error occurred: $e');
-    errorMessage.value = 'Failed to load user data: ${e.toString()}';
-    throw Exception(errorMessage.value);
-  } finally {
-    isLoading(false);
   }
-}
 
   @override
   void onClose() {
-    _userStreamController.close(); // Close the stream when the controller is disposed
+    _userStreamController.close(); 
     super.onClose();
   }
 
-  // Refresh method to manually fetch data
   Future<void> refreshUserData() async {
     await fetchUserData();
   }

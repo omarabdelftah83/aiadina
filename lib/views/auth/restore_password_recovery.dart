@@ -20,26 +20,30 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Obx(() {
-        return Column(
-          children: [
-            Expanded(
-              child: PageView(
-                controller: controller.pageController,
-                physics: const NeverScrollableScrollPhysics(),
-                onPageChanged: (index) {
-                  controller.currentPage.value = index;
-                },
-                children: [
-                  buildEmailInputPage(),
-                VerificationCodePage(),
-                NewPasswordPage(),
-                ],
+      body: GetBuilder<PasswordRecoveryController>(
+        init: controller,
+        builder: (_) {
+          return Column(
+            children: [
+              Expanded(
+                child: PageView(
+                  controller: controller.pageController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  onPageChanged: (index) {
+                    controller.currentPage.value = index;
+                    controller.update(); 
+                  },
+                  children: [
+                    buildEmailInputPage(),
+                    VerificationCodePage(),
+                    NewPasswordPage(),
+                  ],
+                ),
               ),
-            ),
-          ],
-        );
-      }),
+            ],
+          );
+        },
+      ),
     );
   }
 }

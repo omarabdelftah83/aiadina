@@ -167,11 +167,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 HorizontalJobsList(
                   jobsList: jobsList,
                   onJobSelected: (selectedItem) {
-                    if (selectedItem != null) {
-                      userData?.jobs = [selectedItem];
-                      userController.update(); // Trigger update
-                    }
-                  },
+                    userData?.jobs = [selectedItem];
+                    userController.update();
+                    print('Jobs List Length: ${jobsList.length}'); // Log the length to verify data is fetched
+                                    },
                 ),
                 
                 SizedBox(height: 10.h),

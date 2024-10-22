@@ -26,26 +26,6 @@ class PasswordRecoveryController extends GetxController {
   Timer? _timer;
   PasswordRecoveryController(this.service);
 
-  void nextPage() {
-    if (currentPage.value < 2) {
-      pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-      currentPage.value++;
-    }
-  }
-
-  void previousPage() {
-    if (currentPage.value > 0) {
-      pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-      currentPage.value--;
-    }
-  }
-
   void startResendTimer() {
     isResendEnabled.value = false;
     countdownTimer.value = 30;
@@ -142,7 +122,7 @@ class PasswordRecoveryController extends GetxController {
           try {
             await service.resetPassword(email, password, confirmPassword);
             showSnackbar('Success', 'Password reset successfully', isSuccess: true);
-            Get.to(HomePage());
+            Get.to(() => const LoginPage());
           } catch (e) {
           } finally {
             isLoading.value = false;
@@ -194,7 +174,7 @@ class PasswordRecoveryController extends GetxController {
 
   void handleCancelOtp() {
     if (isRecovering) {
-      Get.off(VerificationCodePage()); 
+      Get.off(()=> VerificationCodePage()); 
     } else {
       Get.off( ()=> const LoginPage()); 
     }

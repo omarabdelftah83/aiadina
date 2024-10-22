@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:ourhands/views/home/home_page.dart';
-import 'package:ourhands/views/profile/page_loading.dart';
 import '../../controllers/user_single_controller/get_single_user__controller.dart';
-import '../../models/get_single_user.dart';
 import '../../services/get_single_user.dart';
 import '../../utils/const.dart';
 import '../../utils/images.dart';
@@ -24,39 +23,46 @@ class SellerPage extends StatefulWidget {
 
 class _SellerPageState extends State<SellerPage> {
   late UserController userController;
-  Map<String, bool> isDeletingMap = {}; // لتتبع حالة التحميل لكل عنصر
+  Map<String, bool> isDeletingMap = {}; 
+
   @override
   void initState() {
     super.initState();
-    userController = Get.put(UserController(
-      userService: GetSingleUser(),
-      userId: widget.userID,
-    ));
+    Get.delete<UserController>(tag: widget.userID);
+
+    userController = Get.put(
+      UserController(
+        userService: GetSingleUser(),
+        userId: widget.userID,
+      ),
+      tag: widget.userID,
+    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       userController.fetchUserData();
     });
   }
+
   void _deleteItem(String postId) async {
     setState(() {
-      isDeletingMap[postId] = true; // تعيين حالة التحميل للعنصر
+      isDeletingMap[postId] = true; 
     });
 
     try {
       await DeleteItem().deleteItem(postId);
       setState(() {
-        // تحديث واجهة المستخدم بعد حذف العنصر
         userController.userResponse.value.data?.user?.posts?.removeWhere((post) => post.id == postId);
-        isDeletingMap.remove(postId); // إزالة حالة التحميل بعد الانتهاء
+        isDeletingMap.remove(postId); 
       });
-      Get.snackbar('Success', 'Item deleted successfully');
+      Get.snackbar('نجاح', 'تم حذف العنصر بنجاح');
     } catch (e) {
       setState(() {
-        isDeletingMap.remove(postId); // إزالة حالة التحميل إذا حدث خطأ
+        isDeletingMap.remove(postId);
       });
-      Get.snackbar('Error', 'Failed to delete item');
+      Get.snackbar('خطأ', 'فشل في حذف العنصر. يرجى المحاولة مرة أخرى.');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,13 +77,13 @@ class _SellerPageState extends State<SellerPage> {
           );
         } else if (userController.errorMessage.isNotEmpty) {
           return Center(
-            child: Text('Error: ${userController.errorMessage.value}'),
+            child: Text('خطأ: ${userController.errorMessage.value}'),
           );
         } else {
           final user = userController.userResponse.value.data?.user;
 
           if (user == null) {
-            return const Center(child: Text('User not found'));
+            return const Center(child: Text('المستخدم غير موجود'));
           }
 
           return CustomPaddingApp(
@@ -92,7 +98,7 @@ class _SellerPageState extends State<SellerPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustomText(
-                            text: user.name ?? 'User Name',
+                            text: user.name ?? 'اسم المستخدم',
                             fontSize: 20,
                             fontWeight: FontWeight.w400,
                           ),
@@ -124,17 +130,17 @@ class _SellerPageState extends State<SellerPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       ContactInfoRow(
-                        label: user.jobs?.first ?? 'No Jobs',
+                        label: (user.jobs != null && user.jobs!.isNotEmpty) ? user.jobs!.first : 'لا توجد وظيفة',
                         icon: 'assets/images/mdi_cake.png',
                         iconSize: 24,
                       ),
                       ContactInfoRow(
-                        label: user.location ?? 'Location',
+                        label: user.location ?? 'الموقع',
                         icon: Icons.location_on,
                         iconColor: Colors.green,
                       ),
                       ContactInfoRow(
-                        label: user.phone ?? 'Phone',
+                        label: user.phone ?? 'رقم الهاتف',
                         icon: Icons.call,
                         iconColor: Colors.green,
                       ),
@@ -142,20 +148,45 @@ class _SellerPageState extends State<SellerPage> {
                   ),
                   const SizedBox(height: 15),
                   const SizedBox(height: 20),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    reverse: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: user.posts?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final post = user.posts![index];
-                      return ProductCard(
-                        item: post,
-                        onDelete: _deleteItem, // تمرير دالة الحذف هنا
-                        isDeleting: isDeletingMap[post.id] ?? false, // تمرير حالة التحميل
-                      );
-                    },
-                  ),
+                  if (user.posts != null && user.posts!.isNotEmpty)
+                    ListView.builder(
+                      shrinkWrap: true,
+                      reverse: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: user.posts!.length,
+                      itemBuilder: (context, index) {
+                        final post = user.posts![index];
+                        return ProductCard(
+                          item: post,
+                          onDelete: _deleteItem, 
+                          isDeleting: isDeletingMap[post.id] ?? false,
+                        );
+                      },
+                    )
+                  else
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Lottie.asset(
+                            AssetImages.noData,
+                            width: 250.w,
+                            height: 250.h,
+                            fit: BoxFit.fill,
+                          ),
+                          SizedBox(height: 20.h),
+                          Text(
+                            "لا توجد منشورات متاحة.",
+                            style: TextStyle(
+                              fontSize: 18.sp,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey[700],
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ),
