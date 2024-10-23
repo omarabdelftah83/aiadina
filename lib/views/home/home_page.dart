@@ -37,6 +37,7 @@ class _HomePageState extends State<HomePage> {
   final GetStorage box = GetStorage();
   late UserController userController;
   bool isControllerInitialized = false;
+  bool _isDialogOpen = false; // لتتبع حالة الـ Dialog
 
   @override
   void initState() {
@@ -82,6 +83,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showNoInternetDialog() {
+    if (_isDialogOpen) return; // لا تظهر الحوار إذا كان مفتوحًا بالفعل
+    _isDialogOpen = true;
+
     Get.dialog(
       AlertDialog(
         title: const Text('No Internet Connection'),
@@ -89,13 +93,14 @@ class _HomePageState extends State<HomePage> {
         actions: [
           TextButton(
             onPressed: () {
+              _isDialogOpen = false; // اغلق الحوار
               Get.back();
             },
             child: const Text('OK'),
           ),
         ],
       ),
-      barrierDismissible: false,
+      barrierDismissible: false, // يمنع إغلاق الحوار عند الضغط خارجها
     );
   }
 
@@ -196,10 +201,10 @@ class _HomePageState extends State<HomePage> {
                     final selectedLocation = _controller.selectedLocation.value;
 
                     Get.to(() => SearchResultPage(
-                          selectedCity: selectedCity,
-                          selectedLocation: selectedLocation,
-                          selectedJob: selectedJob,
-                        ));
+                      selectedCity: selectedCity,
+                      selectedLocation: selectedLocation,
+                      selectedJob: selectedJob,
+                    ));
                   },
                   height: 45,
                 ),
@@ -255,35 +260,35 @@ class _HomePageState extends State<HomePage> {
                     ClipOval(
                       child: imagePath != null
                           ? Image.network(
-                              baseUrl + imagePath,
-                              fit: BoxFit.cover,
+                        baseUrl + imagePath,
+                        fit: BoxFit.cover,
+                        width: 40,
+                        height: 40,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: Lottie.asset(
+                              AssetImages.loading,
                               width: 40,
                               height: 40,
-                              loadingBuilder: (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return Center(
-                                  child: Lottie.asset(
-                                    AssetImages.loading,
-                                    width: 40,
-                                    height: 40,
-                                  ),
-                                );
-                              },
-                              errorBuilder: (context, error, stackTrace) {
-                                return Icon(
-                                  Icons.person_3_rounded,
-                                  size: 40,
-                                  color: AppColors.actionButton,
-                                );
-                              },
-                            )
-                          : Center(
-                              child: Lottie.asset(
-                                AssetImages.loading,
-                                width: 40,
-                                height: 40,
-                              ),
                             ),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(
+                            Icons.person_3_rounded,
+                            size: 40,
+                            color: AppColors.actionButton,
+                          );
+                        },
+                      )
+                          : Center(
+                        child: Lottie.asset(
+                          AssetImages.loading,
+                          width: 40,
+                          height: 40,
+                        ),
+                      ),
                     ),
                     SizedBox(height: 4.h),
                     const Text(

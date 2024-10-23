@@ -45,9 +45,7 @@ void showCustomDialog(BuildContext context) {
     },
   );
 
-  // إغلاق الـ Dialog بعد 3 ثواني
   Future.delayed(Duration(seconds: 2), () {
-    Navigator.of(context).pop();
     print("Dialog closed"); // لطباعة رسالة عند الإغلاق
   });
 }
