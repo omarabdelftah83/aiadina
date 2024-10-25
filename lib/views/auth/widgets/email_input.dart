@@ -10,8 +10,7 @@ import 'package:ourhands/widgets/custom/custom_button.dart';
 import '../../../utils/images.dart';
 import '../../../widgets/shared/auth_custom_text_filed.dart';
 import 'package:lottie/lottie.dart';
-
-Widget buildEmailInputPage() {
+Widget buildEmailInputPage({required VoidCallback onContinue}) {
   final PasswordRecoveryController controller = getIt<PasswordRecoveryController>();
 
   return Padding(
@@ -70,6 +69,9 @@ Widget buildEmailInputPage() {
                   text: Strings.continueButton,
                   onTap: () async {
                     await controller.sendRecoveryEmail();
+                    if (controller.isRecovering) {
+                      onContinue();
+                    }
                   },
                 );
               }

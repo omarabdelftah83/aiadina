@@ -13,8 +13,40 @@ class PasswordRecoveryPage extends StatefulWidget {
   State<PasswordRecoveryPage> createState() => _PasswordRecoveryPageState();
 }
 
-class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
+class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> with TickerProviderStateMixin {
   final PasswordRecoveryController controller = getIt<PasswordRecoveryController>();
+  late AnimationController _animationController;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500), // Duration for the animation
+    );
+
+    _animation = Tween<double>(begin: 1.0, end: 1.0).animate(_animationController);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void animateToPage(int pageIndex) {
+    // Start the animation
+    _animationController.forward().then((_) {
+      controller.pageController.animateToPage(
+        pageIndex,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+      _animationController.reset(); // Reset the animation controller
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +63,14 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
                   physics: const NeverScrollableScrollPhysics(),
                   onPageChanged: (index) {
                     controller.currentPage.value = index;
-                    controller.update(); 
+                    controller.update();
                   },
                   children: [
-                    buildEmailInputPage(),
+                    buildEmailInputPage(
+                      onContinue: () {
+                        animateToPage(1); 
+                      },
+                    ),
                     VerificationCodePage(),
                     NewPasswordPage(),
                   ],

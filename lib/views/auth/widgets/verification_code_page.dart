@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:ourhands/utils/colors.dart';
 import 'package:ourhands/utils/font_styles.dart';
 import 'package:ourhands/utils/strings.dart';
@@ -11,6 +12,7 @@ import '../../../utils/dimensions.dart';
 import '../../../utils/images.dart';
 import '../../../widgets/custom/custom_button.dart';
 import 'customs.dart';
+import 'new_password_pgae.dart';
 
 class VerificationCodePage extends StatelessWidget {
   final PasswordRecoveryController controller = getIt<PasswordRecoveryController>();
@@ -18,6 +20,7 @@ class VerificationCodePage extends StatelessWidget {
   VerificationCodePage({super.key});
 
   @override
+
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -71,7 +74,7 @@ class VerificationCodePage extends StatelessWidget {
                     child: Text(
                       controller.isResendEnabled.value
                           ? Strings.resend
-                          : 'Resend in ${controller.countdownTimer.value}s',
+                          : 'إعادة الإرسال خلال ${controller.countdownTimer.value} ثانية',
                       style: TextStyle(
                         fontSize: 14.sp,
                         decoration: TextDecoration.underline,
@@ -89,15 +92,26 @@ class VerificationCodePage extends StatelessWidget {
               child: GetBuilder<PasswordRecoveryController>(
                 init: controller,
                 builder: (_) {
-                  return CustomButton(
-                    height: 60.h,
-                    text: controller.isLoading.value ? 'Verifying...' : Strings.verify,
-                    onTap: controller.isLoading.value
-                        ? () {}
-                        : () {
-                            controller.verifyOtp();
-                          },
-                  );
+                  if (controller.isLoading.value) {
+                    return Center(
+                      child: Lottie.asset(
+                        AssetImages.loading, // Lottie loading animation asset path
+                        width: 100.w,
+                        height: 100.h,
+                      ),
+                    );
+                  } else {
+                    return CustomButton(
+                      height: 60.h,
+                      text: Strings.verify,
+                      onTap: () async {
+                        await controller.verifyOtp();
+                        if (controller.isRecovering) {
+                          Get.to(() => NewPasswordPage(), transition: Transition.leftToRight, duration: const Duration(milliseconds: 500));
+                        }
+                      },
+                    );
+                  }
                 },
               ),
             ),

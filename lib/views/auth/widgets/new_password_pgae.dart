@@ -40,13 +40,15 @@ class NewPasswordPage extends StatelessWidget {
                   children: [
                     SizedBox(height: 50.h),
                     buildAppBar(),
-                   
-                    Image.asset(AssetImages.reset2 , width: 150.w, height: 150.h),
-
-                   
-                   
+                    SizedBox(height: 30.h),
+                    Image.asset(
+                      AssetImages.reset2,
+                      width: 150.w,
+                      height: 150.h,
+                    ),
+                    SizedBox(height: 30.h),
                     AuthTextFormField(
-                      label: Strings.newPassword, 
+                      label: Strings.newPassword,
                       height: 60.h,
                       controller: controller.passwordController,
                       textInputType: TextInputType.visiblePassword,
@@ -67,7 +69,33 @@ class NewPasswordPage extends StatelessWidget {
                       height: 60.h,
                       text: Strings.continueButton,
                       onTap: () {
-                        controller.resetPassword();
+                        // Validation and then reset password
+                        if (controller.passwordController.text.trim().isEmpty ||
+                            controller.confirmPasswordController.text.trim().isEmpty) {
+                          Get.snackbar(
+                            'خطأ',
+                            'يرجى ملء جميع الحقول',
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                        } else if (controller.passwordController.text.trim() !=
+                            controller.confirmPasswordController.text.trim()) {
+                          Get.snackbar(
+                            'خطأ',
+                            'كلمتا المرور غير متطابقتين',
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                        } else if (controller.passwordController.text.length < 6) {
+                          Get.snackbar(
+                            'خطأ',
+                            'يجب أن تكون كلمة المرور على الأقل 6 أحرف',
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                        } else {
+                          controller.resetPassword();
+                        }
                       },
                     ),
                     const SizedBox(height: 20),
@@ -75,7 +103,7 @@ class NewPasswordPage extends StatelessWidget {
                       height: 60.h,
                       text: 'الغاء',
                       onTap: () {
-                        controller.handleCancelOtp(); 
+                        controller.handleCancelOtp();
                       },
                     ),
                   ],
