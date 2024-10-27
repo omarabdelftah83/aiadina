@@ -8,17 +8,18 @@ class ProductCardComments extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        const CustomText(
-          text: 'التعليقات',
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-        ),
-        InkWell(
-          onTap: onTap,
-          child: Padding(
+    return InkWell(
+                onTap: onTap,
+
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          const CustomText(
+            text: 'التعليقات',
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+          Padding(
             padding: const EdgeInsets.all(8.0),
             child: Image.asset(
               'assets/images/fluent_chat-32-regular.png',
@@ -26,8 +27,8 @@ class ProductCardComments extends StatelessWidget {
               height: 15,
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -5,18 +6,58 @@ import 'package:lottie/lottie.dart';
 import 'package:ourhands/models/search_response_model.dart';
 import 'package:ourhands/views/home/seller_page.dart';
 import 'package:ourhands/widgets/app_text/AppText.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../utils/const.dart';
 import '../../../utils/images.dart';
 import 'user_posts.dart';
+
+// Function to open WhatsApp with Egypt's country code if not included
+Future<void> whatsapp({required String contact, String text = ''}) async {
+  final String formattedContact = contact.startsWith('+') ? contact : '+2$contact';
+  
+  final String androidUrl = "whatsapp://send?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
+  final String iosUrl = "https://wa.me/$formattedContact?text=${Uri.encodeComponent(text)}";
+  final String webUrl = "https://api.whatsapp.com/send/?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
+
+  try {
+    if (Platform.isIOS) {
+      if (await canLaunchUrl(Uri.parse(iosUrl))) {
+        await launchUrl(Uri.parse(iosUrl), mode: LaunchMode.externalApplication);
+      } else {
+        await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
+      }
+    } else if (Platform.isAndroid) {
+      if (await canLaunchUrl(Uri.parse(androidUrl))) {
+        await launchUrl(Uri.parse(androidUrl), mode: LaunchMode.externalApplication);
+      } else {
+        await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
+      }
+    } else {
+      await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
+    }
+  } catch (e) {
+    print('Error launching WhatsApp URL: $e');
+    await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
+  }
+}
 
 class CustomCaredSearchResult extends StatelessWidget {
   final UserData userData;
 
   const CustomCaredSearchResult({Key? key, required this.userData}) : super(key: key);
 
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final String? phoneNumber = (userData.posts != null &&
+            userData.posts!.isNotEmpty &&
+            userData.posts![0].user != null)
+        ? userData.posts![0].user!.phone
+        : null;
 
     return SizedBox(
       width: screenWidth * 0.9,
@@ -38,13 +79,18 @@ class CustomCaredSearchResult extends StatelessWidget {
                     child: Row(
                       children: [
                         Flexible(
-                          child: CustomText(
-                            text: (userData.posts != null &&
-                                    userData.posts!.isNotEmpty &&
-                                    userData.posts![0].user != null)
-                                ? userData.posts![0].user!.phone ?? '0123456789'
-                                : 'لا يوجد رقم هاتف متاح',
-                            textColor: Colors.grey,
+                          child: InkWell(
+                            onTap: () {
+                              if (phoneNumber != null) {
+                                whatsapp(contact: phoneNumber, text: ' اهلا بكم انا اتواصل معكم من تطبيق ايادينا ');
+                              } else {
+                                _showSnackBar(context, "No phone number available");
+                              }
+                            },
+                            child: CustomText(
+                              text: phoneNumber ?? 'لا يوجد رقم هاتف متاح',
+                              textColor: Colors.grey,
+                            ),
                           ),
                         ),
                       ],

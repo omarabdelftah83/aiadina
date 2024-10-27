@@ -13,19 +13,18 @@ import 'package:shimmer/shimmer.dart';
 
 class ProductCard extends StatelessWidget {
   final Post item;
-  final Function onDelete; // Callback function for deletion
-  final bool isDeleting; // New parameter for loading state
+  final Function(String) onDelete; // Update type to expect a String argument
+  final bool isDeleting;
 
   const ProductCard({
     Key? key,
     required this.item,
-    required this.onDelete, // Receive the delete function
-    required this.isDeleting, // Receive the loading state
+    required this.onDelete,
+    required this.isDeleting,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Map each image URL from the images list
     final List<String> imageUrls = item.images != null
         ? item.images!.map((image) => baseUrl + image.url!).toList()
         : [];
@@ -33,47 +32,47 @@ class ProductCard extends StatelessWidget {
     return Stack(
       children: [
         isDeleting
-            ? _buildShimmerEffect() // Show shimmer if isDeleting is true
+            ? _buildShimmerEffect()
             : Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            side: const BorderSide(color: Colors.grey, width: 0.1),
-          ),
-          margin: const EdgeInsets.symmetric(vertical: 8),
-          elevation: 3,
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Column(
-              children: [
-                _buildHeader(),
-                const SizedBox(height: 8),
-                ProductCardImage(imageUrls: imageUrls),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: ProductCardComments(onTap: () {
-                        CommentsDialog.show(context, item.id!);
-                      }),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete, color: Colors.redAccent), // Delete icon
-                      onPressed: () {
-                        onDelete(item.id!); // Call the delete function
-                      },
-                    ),
-                  ],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  side: const BorderSide(color: Colors.grey, width: 0.1),
                 ),
-              ],
-            ),
-          ),
-        ),
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                elevation: 3,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    children: [
+                      _buildHeader(),
+                      const SizedBox(height: 8),
+                      ProductCardImage(imageUrls: imageUrls),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: ProductCardComments(
+                              onTap: () {
+                              CommentsDialog.show(context, item.id!);
+                            }
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete, color: Colors.redAccent),
+                            onPressed: () => onDelete(item.id!), 
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
       ],
     );
   }
+  
 
-  // Shimmer Effect
   Widget _buildShimmerEffect() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,

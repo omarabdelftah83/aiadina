@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:ourhands/utils/colors.dart';
 import 'package:ourhands/views/home/home_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../controllers/user_single_controller/get_single_user__controller.dart';
 import '../../services/get_single_user.dart';
 import '../../utils/const.dart';
@@ -23,7 +26,7 @@ class SellerPage extends StatefulWidget {
 
 class _SellerPageState extends State<SellerPage> {
   late UserController userController;
-  Map<String, bool> isDeletingMap = {}; 
+  Map<String, bool> isDeletingMap = {};
 
   @override
   void initState() {
@@ -43,16 +46,104 @@ class _SellerPageState extends State<SellerPage> {
     });
   }
 
+ void _confirmDelete(BuildContext context, String postId) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header with a warning icon
+              Icon(
+                Icons.warning_amber_rounded,
+                color: Colors.redAccent,
+                size: 50,
+              ),
+              const SizedBox(height: 10),
+              
+              // Title
+              Text(
+                'تأكيد الحذف',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+
+              // Content text
+              Text(
+                'هل أنت متأكد أنك تريد حذف هذا العنصر؟',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[700],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[300],
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      'إلغاء',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _deleteItem(postId);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      'حذف',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
   void _deleteItem(String postId) async {
     setState(() {
-      isDeletingMap[postId] = true; 
+      isDeletingMap[postId] = true;
     });
 
     try {
       await DeleteItem().deleteItem(postId);
       setState(() {
         userController.userResponse.value.data?.user?.posts?.removeWhere((post) => post.id == postId);
-        isDeletingMap.remove(postId); 
+        isDeletingMap.remove(postId);
       });
       Get.snackbar('نجاح', 'تم حذف العنصر بنجاح');
     } catch (e) {
@@ -63,8 +154,44 @@ class _SellerPageState extends State<SellerPage> {
     }
   }
 
+ Future<void> whatsapp({required String contact, String text = ''}) async {
+  final String formattedContact = contact.startsWith('+') ? contact : '+2$contact';
+  
+  final String androidUrl = "whatsapp://send?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
+  final String iosUrl = "https://wa.me/$formattedContact?text=${Uri.encodeComponent(text)}";
+  final String webUrl = "https://api.whatsapp.com/send/?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
+
+  try {
+    if (Platform.isIOS) {
+      if (await canLaunchUrl(Uri.parse(iosUrl))) {
+        await launchUrl(Uri.parse(iosUrl), mode: LaunchMode.externalApplication);
+      } else {
+        await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
+      }
+    } else if (Platform.isAndroid) {
+      if (await canLaunchUrl(Uri.parse(androidUrl))) {
+        await launchUrl(Uri.parse(androidUrl), mode: LaunchMode.externalApplication);
+      } else {
+        await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
+      }
+    } else {
+      await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
+    }
+  } catch (e) {
+    print('Error launching WhatsApp URL: $e');
+    await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
+  }
+}
+
+
+
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
   Widget build(BuildContext context) {
+    String phoneNumber = userController.userResponse.value.data?.user?.phone ?? '';
     return Scaffold(
       body: Obx(() {
         if (userController.isLoading.value) {
@@ -131,7 +258,8 @@ class _SellerPageState extends State<SellerPage> {
                     children: [
                       ContactInfoRow(
                         label: (user.jobs != null && user.jobs!.isNotEmpty) ? user.jobs!.first : 'لا توجد وظيفة',
-                        icon: 'assets/images/mdi_cake.png',
+                        icon: Icons.handshake_sharp ,
+                        iconColor: AppColors.actionButton,
                         iconSize: 24,
                       ),
                       ContactInfoRow(
@@ -139,10 +267,19 @@ class _SellerPageState extends State<SellerPage> {
                         icon: Icons.location_on,
                         iconColor: Colors.green,
                       ),
-                      ContactInfoRow(
-                        label: user.phone ?? 'رقم الهاتف',
-                        icon: Icons.call,
-                        iconColor: Colors.green,
+                      InkWell(
+                        onTap: () {
+                              if (phoneNumber != null) {
+                                whatsapp(contact: phoneNumber, text: ' اهلا بكم انا اتواصل معكم من تطبيق ايادينا ');
+                              } else {
+                                _showSnackBar(context, "No phone number available");
+                              }
+                            },
+                        child: ContactInfoRow(
+                          label: user.phone ?? 'رقم الهاتف',
+                          icon: Icons.call,
+                          iconColor: Colors.green,
+                        ),
                       ),
                     ],
                   ),
@@ -156,9 +293,12 @@ class _SellerPageState extends State<SellerPage> {
                       itemCount: user.posts!.length,
                       itemBuilder: (context, index) {
                         final post = user.posts![index];
+                        final postID= user.posts![index].id!;
+                        print('--------------$postID');
                         return ProductCard(
                           item: post,
-                          onDelete: _deleteItem, 
+                          onDelete: (postId) => _confirmDelete(context, postId),
+
                           isDeleting: isDeletingMap[post.id] ?? false,
                         );
                       },
