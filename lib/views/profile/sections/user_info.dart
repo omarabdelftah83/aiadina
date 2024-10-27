@@ -25,7 +25,6 @@ class UserInfoSection extends StatefulWidget {
 }
 
 class _UserInfoSectionState extends State<UserInfoSection> {
-  // Initialize the controller
   final UserInfoController _userInfoController = Get.put(UserInfoController());
 
   @override

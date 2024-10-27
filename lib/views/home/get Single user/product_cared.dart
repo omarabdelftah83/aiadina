@@ -6,21 +6,20 @@ import '../../../utils/const.dart';
 import 'comments_dialog.dart';
 import 'product_card_image.dart';
 import 'product_card_comments.dart';
-
-import 'package:shimmer/shimmer.dart';
-
 import 'package:shimmer/shimmer.dart';
 
 class ProductCard extends StatelessWidget {
   final Post item;
-  final Function(String) onDelete; // Update type to expect a String argument
+  final Function(String) onDelete;
   final bool isDeleting;
+  final String currentUserId;
 
   const ProductCard({
     Key? key,
     required this.item,
     required this.onDelete,
     required this.isDeleting,
+    required this.currentUserId,
   }) : super(key: key);
 
   @override
@@ -28,6 +27,7 @@ class ProductCard extends StatelessWidget {
     final List<String> imageUrls = item.images != null
         ? item.images!.map((image) => baseUrl + image.url!).toList()
         : [];
+    final String ownerID = item.user?.id ?? '';
 
     return Stack(
       children: [
@@ -54,14 +54,15 @@ class ProductCard extends StatelessWidget {
                             padding: const EdgeInsets.only(left: 8.0),
                             child: ProductCardComments(
                               onTap: () {
-                              CommentsDialog.show(context, item.id!);
-                            }
+                                CommentsDialog.show(context, item.id!);
+                              },
                             ),
                           ),
-                          IconButton(
-                            icon: Icon(Icons.delete, color: Colors.redAccent),
-                            onPressed: () => onDelete(item.id!), 
-                          ),
+                          if (item.user != null && ownerID == currentUserId)
+                            IconButton(
+                              icon: Icon(Icons.delete, color: Colors.redAccent),
+                              onPressed: () => onDelete(item.id!),
+                            ),
                         ],
                       ),
                     ],
@@ -71,7 +72,6 @@ class ProductCard extends StatelessWidget {
       ],
     );
   }
-  
 
   Widget _buildShimmerEffect() {
     return Shimmer.fromColors(
@@ -91,13 +91,13 @@ class ProductCard extends StatelessWidget {
               Container(
                 width: double.infinity,
                 height: 20.0,
-                color: Colors.white, // For shimmer effect on title
+                color: Colors.white,
               ),
               const SizedBox(height: 8),
               Container(
                 width: double.infinity,
                 height: 150.0,
-                color: Colors.white, // For shimmer effect on image
+                color: Colors.white,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -105,12 +105,12 @@ class ProductCard extends StatelessWidget {
                   Container(
                     width: 80.0,
                     height: 20.0,
-                    color: Colors.white, // For shimmer effect on comments
+                    color: Colors.white,
                   ),
                   Container(
                     width: 40.0,
                     height: 40.0,
-                    color: Colors.white, // For shimmer effect on delete icon
+                    color: Colors.white,
                   ),
                 ],
               ),

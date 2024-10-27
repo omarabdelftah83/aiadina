@@ -1,4 +1,4 @@
-package com.example.ourhands
+package com.ayadina.handmade
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -66,9 +66,7 @@ class _SellerPageState extends State<SellerPage> {
                 size: 50,
               ),
               const SizedBox(height: 10),
-              
-              // Title
-              Text(
+                            Text(
                 'تأكيد الحذف',
                 style: TextStyle(
                   fontSize: 18,
@@ -79,7 +77,6 @@ class _SellerPageState extends State<SellerPage> {
               ),
               const SizedBox(height: 10),
 
-              // Content text
               Text(
                 'هل أنت متأكد أنك تريد حذف هذا العنصر؟',
                 style: TextStyle(
@@ -293,13 +290,12 @@ class _SellerPageState extends State<SellerPage> {
                       itemCount: user.posts!.length,
                       itemBuilder: (context, index) {
                         final post = user.posts![index];
-                        final postID= user.posts![index].id!;
-                        print('--------------$postID');
+                        print('----------*////----${widget.userID}');
                         return ProductCard(
                           item: post,
                           onDelete: (postId) => _confirmDelete(context, postId),
-
                           isDeleting: isDeletingMap[post.id] ?? false,
+                          currentUserId: widget.userID,
                         );
                       },
                     )

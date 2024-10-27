@@ -45,7 +45,6 @@ class _SearchResultPageState extends State<SearchResultPage> {
   }
 
   Future<void> fetchData() async {
-    // Defer state changes until after the current frame completes
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await searchController.fetchSearchResults(
         widget.selectedCity,
@@ -128,7 +127,39 @@ class _SearchResultPageState extends State<SearchResultPage> {
                         );
                       }
                       if (searchController.errorMessage.value.isNotEmpty) {
-                        return Center(child: Text(searchController.errorMessage.value));
+                        // عرض رسالة ودية بدلاً من رسالة خطأ خادم داخلي
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Lottie.asset(
+                                AssetImages.noData,
+                                width: 250.w,
+                                height: 250.h,
+                                fit: BoxFit.fill,
+                              ),
+                              SizedBox(height: 20.h),
+                              Text(
+                                "An unexpected error occurred.",
+                                style: TextStyle(
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey[700],
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 10.h),
+                              Text(
+                                "Please try again later.",
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  color: Colors.grey[600],
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        );
                       }
 
                       if (searchController.searchResults.isEmpty) {
