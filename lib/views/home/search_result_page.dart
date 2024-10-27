@@ -127,7 +127,6 @@ class _SearchResultPageState extends State<SearchResultPage> {
                         );
                       }
                       if (searchController.errorMessage.value.isNotEmpty) {
-                        // عرض رسالة ودية بدلاً من رسالة خطأ خادم داخلي
                         return Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,

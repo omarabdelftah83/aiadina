@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:ourhands/models/search_response_model.dart';
+import 'package:ourhands/utils/colors.dart';
 import 'package:ourhands/views/home/seller_page.dart';
 import 'package:ourhands/widgets/app_text/AppText.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -183,8 +184,11 @@ class CustomCaredSearchResult extends StatelessWidget {
                         textColor: Colors.grey,
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.asset('assets/images/mdi_cake.png'),
+                        padding:const EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.handshake,
+                          color: AppColors.actionButton,
+                        ),
                       ),
                     ],
                   ),
