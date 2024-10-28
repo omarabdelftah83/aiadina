@@ -60,7 +60,7 @@ class ProductCard extends StatelessWidget {
                           ),
                           if (item.user != null && ownerID == currentUserId)
                             IconButton(
-                              icon: Icon(Icons.delete, color: Colors.redAccent),
+                              icon: const Icon(Icons.delete, color: Colors.redAccent),
                               onPressed: () => onDelete(item.id!),
                             ),
                         ],
@@ -122,17 +122,29 @@ class ProductCard extends StatelessWidget {
   }
 
   Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText(
-          text: formatTimeAgo(item.createdAt),
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CustomText(
+              text: formatTimeAgo(item.createdAt),
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+            ),
+            CustomText(
+              text: item.title ?? 'Product Name',
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ],
         ),
+        const SizedBox(height: 5),
         CustomText(
-          text: item.title ?? 'Product Name',
-          fontSize: 15,
+          text: item.description ?? 'Product description',
+          fontSize: 14,
+          textAlign: TextAlign.end, 
           fontWeight: FontWeight.w400,
         ),
       ],

@@ -12,52 +12,61 @@ import '../../../utils/const.dart';
 import '../../../utils/images.dart';
 import 'user_posts.dart';
 
-// Function to open WhatsApp with Egypt's country code if not included
-Future<void> whatsapp({required String contact, String text = ''}) async {
-  final String formattedContact = contact.startsWith('+') ? contact : '+2$contact';
-  
-  final String androidUrl = "whatsapp://send?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
-  final String iosUrl = "https://wa.me/$formattedContact?text=${Uri.encodeComponent(text)}";
-  final String webUrl = "https://api.whatsapp.com/send/?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
-
-  try {
-    if (Platform.isIOS) {
-      if (await canLaunchUrl(Uri.parse(iosUrl))) {
-        await launchUrl(Uri.parse(iosUrl), mode: LaunchMode.externalApplication);
-      } else {
-        await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
-      }
-    } else if (Platform.isAndroid) {
-      if (await canLaunchUrl(Uri.parse(androidUrl))) {
-        await launchUrl(Uri.parse(androidUrl), mode: LaunchMode.externalApplication);
-      } else {
-        await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
-      }
-    } else {
-      await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
-    }
-  } catch (e) {
-    print('Error launching WhatsApp URL: $e');
-    await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
-  }
-}
-
-class CustomCaredSearchResult extends StatelessWidget {
+class CustomCaredSearchResult extends StatefulWidget {
   final UserData userData;
 
   const CustomCaredSearchResult({Key? key, required this.userData}) : super(key: key);
 
-  void _showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  @override
+  _CustomCaredSearchResultState createState() => _CustomCaredSearchResultState();
+}
+
+class _CustomCaredSearchResultState extends State<CustomCaredSearchResult> with SingleTickerProviderStateMixin {
+  bool _isTapped = false;
+  bool _showHint = false;
+  late final AnimationController _controller;
+  late final Animation<Offset> _offsetAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: this,
+    );
+
+    _offsetAnimation = Tween<Offset>(begin: Offset(1.5, 0), end: Offset(0, 0)).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() {
+        _showHint = true;
+      });
+      _controller.forward(); // Start the animation
+      // Hide hint after a few seconds
+      Future.delayed(Duration(seconds: 3), () {
+        setState(() {
+          _showHint = false;
+        });
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final String? phoneNumber = (userData.posts != null &&
-            userData.posts!.isNotEmpty &&
-            userData.posts![0].user != null)
-        ? userData.posts![0].user!.phone
+    final String? phoneNumber = (widget.userData.posts != null &&
+            widget.userData.posts!.isNotEmpty &&
+            widget.userData.posts![0].user != null)
+        ? widget.userData.posts![0].user!.phone
         : null;
 
     return SizedBox(
@@ -81,13 +90,6 @@ class CustomCaredSearchResult extends StatelessWidget {
                       children: [
                         Flexible(
                           child: InkWell(
-                            onTap: () {
-                              if (phoneNumber != null) {
-                                whatsapp(contact: phoneNumber, text: ' اهلا بكم انا اتواصل معكم من تطبيق ايادينا ');
-                              } else {
-                                _showSnackBar(context, "No phone number available");
-                              }
-                            },
                             child: CustomText(
                               text: phoneNumber ?? 'لا يوجد رقم هاتف متاح',
                               textColor: Colors.grey,
@@ -100,55 +102,86 @@ class CustomCaredSearchResult extends StatelessWidget {
                   Row(
                     children: [
                       CustomText(
-                        text: (userData.posts != null &&
-                                userData.posts!.isNotEmpty &&
-                                userData.posts![0].user != null)
-                            ? userData.posts![0].user!.name ?? 'مستخدم غير معروف'
+                        text: (widget.userData.posts != null &&
+                                widget.userData.posts!.isNotEmpty &&
+                                widget.userData.posts![0].user != null)
+                            ? widget.userData.posts![0].user!.name ?? 'مستخدم غير معروف'
                             : 'لا يوجد اسم مستخدم متاح',
                         fontSize: screenWidth * 0.035,
                         fontWeight: FontWeight.w500,
                       ),
                       SizedBox(width: screenWidth * 0.02),
-                      InkWell(
+                      GestureDetector(
+                        onTapDown: (_) => setState(() => _isTapped = true),
+                        onTapUp: (_) => setState(() => _isTapped = false),
                         onTap: () {
-                          if (userData.posts != null && userData.posts!.isNotEmpty && userData.posts![0].user != null) {
-                            String uploaderId = userData.posts![0].user!.id!;
+                          if (widget.userData.posts != null &&
+                              widget.userData.posts!.isNotEmpty &&
+                              widget.userData.posts![0].user != null) {
+                            String uploaderId = widget.userData.posts![0].user!.id!;
                             Get.to(() => SellerPage(userID: uploaderId));
-                            print("Navigating to SellerPage with userID: $uploaderId");
-                          } else {
-                            print("No valid user found for the post.");
                           }
                         },
-                        child: CircleAvatar(
-                          radius: screenWidth * 0.05,
-                          backgroundColor: Colors.grey[200],
-                          child: userData.images != null && userData.images!.isNotEmpty
-                              ? ClipOval(
-                                  child: Image.network(
-                                    baseUrl + userData.images![0].url!,
-                                    fit: BoxFit.cover,
-                                    width: 100,
-                                    height: 100,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Center(
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            AnimatedScale(
+                              scale: _isTapped ? 1.1 : 1.0,
+                              duration: const Duration(milliseconds: 100),
+                              child: CircleAvatar(
+                                radius: screenWidth * 0.05,
+                                backgroundColor: Colors.grey[200],
+                                child: widget.userData.images != null && widget.userData.images!.isNotEmpty
+                                    ? ClipOval(
+                                        child: Image.network(
+                                          baseUrl + widget.userData.images![0].url!,
+                                          fit: BoxFit.cover,
+                                          width: 100,
+                                          height: 100,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Center(
+                                              child: Lottie.asset(
+                                                AssetImages.noImage,
+                                                width: 60,
+                                                height: 60,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      )
+                                    : Center(
                                         child: Lottie.asset(
                                           AssetImages.noImage,
                                           width: 60,
                                           height: 60,
                                           fit: BoxFit.cover,
                                         ),
-                                      );
-                                    },
-                                  ),
-                                )
-                              : Center(
-                                  child: Lottie.asset(
-                                    AssetImages.noImage,
-                                    width: 60,
-                                    height: 60,
-                                    fit: BoxFit.cover,
+                                      ),
+                              ),
+                            ),
+                            if (_showHint)
+                              Positioned(
+                                top: -50
+                                ,
+                                child: SlideTransition(
+                                  position: _offsetAnimation,
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.arrow_upward,
+                                        color: Colors.green,
+                                        size: 24,
+                                      ),
+                                      Text(
+                                        'يمكن مشاهده ملف البائع',
+                                        style: TextStyle(color: Colors.green, fontSize: 12),
+                                      ),
+                                    ],
                                   ),
                                 ),
+                              ),
+                          ],
                         ),
                       ),
                     ],
@@ -162,7 +195,7 @@ class CustomCaredSearchResult extends StatelessWidget {
                   Row(
                     children: [
                       CustomText(
-                        text: userData.location ?? 'الموقع غير متوفر',
+                        text: widget.userData.location ?? 'الموقع غير متوفر',
                         textColor: Colors.grey,
                       ),
                       IconButton(
@@ -174,17 +207,17 @@ class CustomCaredSearchResult extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Row(
                     children: [
                       CustomText(
-                        text: userData.jobs != null && userData.jobs!.isNotEmpty
-                            ? userData.jobs!.first
+                        text: widget.userData.jobs != null && widget.userData.jobs!.isNotEmpty
+                            ? widget.userData.jobs!.first
                             : 'لا توجد وظيفة',
                         textColor: Colors.grey,
                       ),
                       Padding(
-                        padding:const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
                         child: Icon(
                           Icons.handshake,
                           color: AppColors.actionButton,
@@ -196,12 +229,12 @@ class CustomCaredSearchResult extends StatelessWidget {
               ),
               SizedBox(height: 20.h),
               CustomText(
-                text: '${(userData.posts != null && userData.posts!.isNotEmpty && userData.posts![0].user != null)
-                    ? userData.posts![0].user!.name ?? 'هذا المستخدم'
+                text: '${(widget.userData.posts != null && widget.userData.posts!.isNotEmpty && widget.userData.posts![0].user != null)
+                    ? widget.userData.posts![0].user!.name ?? 'هذا المستخدم'
                     : 'هذا المستخدم'}  بعض الأعمال السابقة لـ',
               ),
               SizedBox(height: 10.h),
-              UserPosts(images: userData.images?.map((image) => image.url!).toList() ?? []),
+              UserPosts(images: widget.userData.images?.map((image) => image.url!).toList() ?? []),
             ],
           ),
         ),
