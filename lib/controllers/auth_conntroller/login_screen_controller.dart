@@ -77,7 +77,6 @@ import '../../views/home/home_page.dart';
   } catch (e) {
     isLoading.value = false;
 
-    // If an exception occurs, handle it and show a generic error message
     print('Login failed, exception: $e');
     Get.snackbar(
       'خطأ',

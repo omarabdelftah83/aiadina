@@ -16,6 +16,7 @@ import 'sections/logOut_section.dart';
 import 'sections/password_section.dart';
 import 'sections/profiles_image_section.dart';
 import 'sections/user_info.dart';
+import 'widget/customer_services.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -181,9 +182,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 
                 SizedBox(height: 10.h),
                 
-                LogOutSection(),
+             
                 
                 SizedBox(height: 20.h),
+             const   SupportSection(),
+            SizedBox(height: 20.h),
+             LogOutSection(),
               ],
             ),
           ),

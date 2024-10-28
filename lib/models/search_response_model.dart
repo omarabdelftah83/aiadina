@@ -50,8 +50,8 @@ class UserData {
         .map((post) => Post.fromJson(post))
         .toList(),
     images: (json['images'] as List<dynamic>?)
-        ?.whereType<String>() // Adjust if each image is a URL string
-        .map((image) => ImageModel(url: image)) // Create ImageModel with URLs
+        ?.whereType<String>() 
+        .map((image) => ImageModel(url: image)) 
         .toList(),
   );
 }
