@@ -9,7 +9,7 @@ class SupportSection extends StatefulWidget {
 
   const SupportSection({
     Key? key,
-    this.supportNumber = '+20 1021441861', // Default support number
+    this.supportNumber = '+20 1021441861',
   }) : super(key: key);
 
   @override
@@ -26,7 +26,6 @@ class _SupportSectionState extends State<SupportSection> with SingleTickerProvid
   void initState() {
     super.initState();
 
-    // Initialize animation controller and slide-in animation
     _controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 800),
@@ -35,7 +34,6 @@ class _SupportSectionState extends State<SupportSection> with SingleTickerProvid
     _slideAnimation = Tween<Offset>(begin: Offset(0, 1), end: Offset(0, 0))
         .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
-    // Trigger opacity and slide-in animation on load
     Future.delayed(Duration(milliseconds: 300), () {
       setState(() {
         _isVisible = true;
@@ -51,33 +49,32 @@ class _SupportSectionState extends State<SupportSection> with SingleTickerProvid
   }
 
   Future<void> whatsapp({required String contact, String text = ''}) async {
-    final String formattedContact = contact.startsWith('+') ? contact : '+20$contact';
+  final String formattedContact = contact.startsWith('+') ? contact : '+2$contact';
+  final String androidUrl = "whatsapp://send?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
+  final String iosUrl = "https://wa.me/$formattedContact?text=${Uri.encodeComponent(text)}";
+  final String webUrl = "https://api.whatsapp.com/send/?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
 
-    final String androidUrl = "whatsapp://send?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
-    final String iosUrl = "https://wa.me/$formattedContact?text=${Uri.encodeComponent(text)}";
-    final String webUrl = "https://api.whatsapp.com/send/?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
-
-    try {
-      if (Platform.isIOS) {
-        if (await canLaunchUrl(Uri.parse(iosUrl))) {
-          await launchUrl(Uri.parse(iosUrl), mode: LaunchMode.externalApplication);
-        } else {
-          await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
-        }
-      } else if (Platform.isAndroid) {
-        if (await canLaunchUrl(Uri.parse(androidUrl))) {
-          await launchUrl(Uri.parse(androidUrl), mode: LaunchMode.externalApplication);
-        } else {
-          await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
-        }
-      } else {
-        await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
-      }
-    } catch (e) {
-      print('Error launching WhatsApp URL: $e');
-      await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
+  try {
+    String url;
+    if (Platform.isIOS) {
+      url = iosUrl;
+    } else if (Platform.isAndroid) {
+      url = androidUrl;
+    } else {
+      url = webUrl;
     }
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      await launch(webUrl);
+    }
+  } catch (e) {
+    print('Error launching WhatsApp URL: $e');
+    await launch(webUrl);
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

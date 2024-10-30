@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showNoInternetDialog() {
-    if (_isDialogOpen) return; // لا تظهر الحوار إذا كان مفتوحًا بالفعل
+    if (_isDialogOpen) return; 
     _isDialogOpen = true;
 
     Get.dialog(

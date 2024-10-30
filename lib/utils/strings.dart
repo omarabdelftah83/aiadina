@@ -18,7 +18,7 @@ class Strings {
   static const String enterVerificationCode = "ادخل رمز التحقق المرسل الى حسابك";
   static const String resend = "اعادة الارسال";
   static const String resendAfter = "اعادة الارسال بعد";
-  static const String alerText = "تطبيق ايادينا اول تطبيق هاندميد فى مصر";
+  static const String alerText = "تطبيق ايادينا للهاندميد ";
   static const String serachResult = "نتائج البحث";
   static const String confirmLogOut = "هل انت متأكد انك تريد تسجيل الخروج ؟";
   static const String logOut = "تسجيل الخروج";

@@ -36,17 +36,16 @@ class _CustomCaredSearchResultState extends State<CustomCaredSearchResult> with 
       vsync: this,
     );
 
-    _offsetAnimation = Tween<Offset>(begin: Offset(1.5, 0), end: Offset(0, 0)).animate(
+    _offsetAnimation = Tween<Offset>(begin: const Offset(1.5, 0), end: const Offset(0, 0)).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () {
       setState(() {
         _showHint = true;
       });
-      _controller.forward(); // Start the animation
-      // Hide hint after a few seconds
-      Future.delayed(Duration(seconds: 3), () {
+      _controller.forward(); 
+      Future.delayed(const Duration(seconds: 1), () {
         setState(() {
           _showHint = false;
         });
@@ -166,7 +165,7 @@ class _CustomCaredSearchResultState extends State<CustomCaredSearchResult> with 
                                 ,
                                 child: SlideTransition(
                                   position: _offsetAnimation,
-                                  child: Column(
+                                  child: const Column(
                                     children: [
                                       Icon(
                                         Icons.arrow_upward,

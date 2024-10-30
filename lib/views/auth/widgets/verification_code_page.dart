@@ -17,10 +17,11 @@ import 'new_password_pgae.dart';
 class VerificationCodePage extends StatelessWidget {
   final PasswordRecoveryController controller = getIt<PasswordRecoveryController>();
 
-  VerificationCodePage({super.key});
+  VerificationCodePage({super.key}) {
+    controller.currentPage.value = 1; // Set the initial highlighted index to 1
+  }
 
   @override
-
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -95,7 +96,7 @@ class VerificationCodePage extends StatelessWidget {
                   if (controller.isLoading.value) {
                     return Center(
                       child: Lottie.asset(
-                        AssetImages.loading, // Lottie loading animation asset path
+                        AssetImages.loading,
                         width: 100.w,
                         height: 100.h,
                       ),
@@ -107,7 +108,9 @@ class VerificationCodePage extends StatelessWidget {
                       onTap: () async {
                         await controller.verifyOtp();
                         if (controller.isRecovering) {
-                          Get.to(() => NewPasswordPage(), transition: Transition.leftToRight, duration: const Duration(milliseconds: 500));
+                          Get.off(() => NewPasswordPage(),
+                              transition: Transition.leftToRight,
+                              duration: const Duration(milliseconds: 500));
                         }
                       },
                     );

@@ -14,7 +14,9 @@ import '../../../widgets/shared/auth_custom_text_filed.dart';
 class NewPasswordPage extends StatelessWidget {
   final PasswordRecoveryController controller = getIt<PasswordRecoveryController>();
 
-  NewPasswordPage({super.key});
+  NewPasswordPage({super.key}) {
+    controller.currentPage.value = 2; // Set initial highlighted index to 2
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +42,9 @@ class NewPasswordPage extends StatelessWidget {
                   children: [
                     SizedBox(height: 50.h),
                     buildAppBar(),
+                    GetBuilder<PasswordRecoveryController>(
+                      builder: (_) => buildPageIndicator(controller.currentPage.value),
+                    ),
                     SizedBox(height: 30.h),
                     Image.asset(
                       AssetImages.reset2,
@@ -69,7 +74,6 @@ class NewPasswordPage extends StatelessWidget {
                       height: 60.h,
                       text: Strings.continueButton,
                       onTap: () {
-                        // Validation and then reset password
                         if (controller.passwordController.text.trim().isEmpty ||
                             controller.confirmPasswordController.text.trim().isEmpty) {
                           Get.snackbar(

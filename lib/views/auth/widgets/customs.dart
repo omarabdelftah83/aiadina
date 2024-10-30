@@ -34,20 +34,16 @@ Widget buildPageIndicator(int currentIndex) {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(3, (index) {
-        // Define a color based on the currentIndex variable
-        Color indicatorColor;
-        if (currentIndex == index) {
-          indicatorColor = AppColors.actionButton; // Highlight current page
-        } else {
-          indicatorColor = AppColors.iconeye; // Default color for others
-        }
+        Color indicatorColor = index == currentIndex
+            ? AppColors.actionButton 
+            : AppColors.iconeye; 
 
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 8.0),
           height: 5.0,
           width: 30.0,
           decoration: BoxDecoration(
-            color: indicatorColor, // Use the determined color
+            color: indicatorColor,
             borderRadius: BorderRadius.circular(5.0),
           ),
         );

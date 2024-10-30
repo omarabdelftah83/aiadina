@@ -76,7 +76,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
                   ),
                   SizedBox(height: 20.h),
                   Text(
-                    "No internet connection.",
+                    "لا يوجد اتصال بالإنترنت.",
                     style: TextStyle(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w500,
@@ -86,7 +86,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
                   ),
                   SizedBox(height: 10.h),
                   Text(
-                    "Please check your connection and try again.",
+                    "يرجى التحقق من اتصالك وحاول مرة أخرى.",
                     style: TextStyle(
                       fontSize: 16.sp,
                       color: Colors.grey[600],
@@ -137,19 +137,10 @@ class _SearchResultPageState extends State<SearchResultPage> {
                                 height: 250.h,
                                 fit: BoxFit.fill,
                               ),
-                              SizedBox(height: 20.h),
-                              Text(
-                                "An unexpected error occurred.",
-                                style: TextStyle(
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey[700],
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
+                             
                               SizedBox(height: 10.h),
                               Text(
-                                "Please try again later.",
+                                "يرجى المحاولة مرة أخرى لاحقًا.",
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                   color: Colors.grey[600],
@@ -174,7 +165,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
                               ),
                               SizedBox(height: 20.h),
                               Text(
-                                "No results found for your search.",
+                                "لم يتم العثور على نتائج لبحثك.",
                                 style: TextStyle(
                                   fontSize: 18.sp,
                                   fontWeight: FontWeight.w500,
@@ -184,7 +175,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
                               ),
                               SizedBox(height: 10.h),
                               Text(
-                                "Try adjusting your search criteria to find more results.",
+                                "حاول تعديل معايير البحث الخاصة بك للعثور على المزيد من النتائج.",
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                   color: Colors.grey[600],

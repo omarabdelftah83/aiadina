@@ -153,30 +153,28 @@ class _SellerPageState extends State<SellerPage> {
 
  Future<void> whatsapp({required String contact, String text = ''}) async {
   final String formattedContact = contact.startsWith('+') ? contact : '+2$contact';
-  
   final String androidUrl = "whatsapp://send?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
   final String iosUrl = "https://wa.me/$formattedContact?text=${Uri.encodeComponent(text)}";
   final String webUrl = "https://api.whatsapp.com/send/?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
 
   try {
+    String url;
     if (Platform.isIOS) {
-      if (await canLaunchUrl(Uri.parse(iosUrl))) {
-        await launchUrl(Uri.parse(iosUrl), mode: LaunchMode.externalApplication);
-      } else {
-        await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
-      }
+      url = iosUrl;
     } else if (Platform.isAndroid) {
-      if (await canLaunchUrl(Uri.parse(androidUrl))) {
-        await launchUrl(Uri.parse(androidUrl), mode: LaunchMode.externalApplication);
-      } else {
-        await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
-      }
+      url = androidUrl;
     } else {
-      await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
+      url = webUrl;
+    }
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      await launch(webUrl);
     }
   } catch (e) {
     print('Error launching WhatsApp URL: $e');
-    await launchUrl(Uri.parse(webUrl), mode: LaunchMode.externalApplication);
+    await launch(webUrl);
   }
 }
 
@@ -274,7 +272,7 @@ class _SellerPageState extends State<SellerPage> {
                             },
                         child: ContactInfoRow(
                           label: user.phone ?? 'رقم الهاتف',
-                          icon: Icons.call,
+                          icon: AssetImages.whatsapp,
                           iconColor: Colors.green,
                         ),
                       ),

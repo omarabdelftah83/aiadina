@@ -47,7 +47,7 @@ class _PageLoadingState extends State<PageLoading> {
                   ),
                   SizedBox(height: 50.h), 
                   const CustomText(
-                    text: 'تطبيق ايادينا اول خطوة للنجاح',
+                    text: 'تطبيق ايادينا لدعم أعمال الهاندميد',
                     textColor: Colors.green,
                     fontSize: 24, 
                   ),

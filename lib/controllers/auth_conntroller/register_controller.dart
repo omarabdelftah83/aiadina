@@ -33,20 +33,20 @@ class RegisterController extends GetxController {
   }
 
   String? validateEmail(String value) {
-    if (value.isEmpty) return 'Email cannot be empty';
-    if (!GetUtils.isEmail(value)) return 'Enter a valid email';
+    if (value.isEmpty) return 'البريد الإلكتروني لا يمكن أن يكون فارغًا';
+    if (!GetUtils.isEmail(value)) return 'يرجى إدخال بريد إلكتروني صحيح';
     return null;
   }
 
   String? validatePassword(String value) {
-    if (value.isEmpty) return 'Password cannot be empty';
-    if (value.length < 6) return 'Password must be at least 6 characters long';
+    if (value.isEmpty) return 'كلمة المرور لا يمكن أن تكون فارغة';
+    if (value.length < 6) return 'يجب أن تكون كلمة المرور 6 أحرف على الأقل';
     return null;
   }
 
   String? validateMobile(String value) {
-    if (value.isEmpty) return 'Mobile cannot be empty';
-    if (!GetUtils.isPhoneNumber(value)) return 'Enter a valid phone number';
+    if (value.isEmpty) return 'رقم الهاتف لا يمكن أن يكون فارغًا';
+    if (!GetUtils.isPhoneNumber(value)) return 'يرجى إدخال رقم هاتف صحيح';
     return null;
   }
   
@@ -59,8 +59,8 @@ class RegisterController extends GetxController {
       for (var city in cities) {
         districtsMap[city] = response.data.districts.toSet().toList();
       }
-      print('Cities fetched: ${cities}');
-      print('Districts fetched for each city: ${districtsMap}');
+      print('تم جلب المدن: ${cities}');
+      print('تم جلب المناطق لكل مدينة: ${districtsMap}');
     } else {
       print('فشل في جلب المواقع');
     }
@@ -97,12 +97,12 @@ class RegisterController extends GetxController {
     isLoading.value = false;
 
     if (response.status == 'success' || response.status == 'SUCCESS') {
-      Get.snackbar('Success', response.message,
+      Get.snackbar('نجاح', 'تم التسجيل بنجاح',
           snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green);
       
       Get.to(() =>const LoginPage());
     } else {
-      Get.snackbar('Error', response.message,
+      Get.snackbar('خطأ', 'فشل في التسجيل',
           snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
     }
   }

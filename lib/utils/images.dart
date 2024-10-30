@@ -11,5 +11,6 @@ class AssetImages {
   static const String noUser = "assets/images/noUser.json";
   static const String iconApp = "assets/images/Asset(2).png";
   static const String noInternet = "assets/images/noInternet.json";
+  static const String whatsapp = "assets/images/whatsapp.png";
 
 }
