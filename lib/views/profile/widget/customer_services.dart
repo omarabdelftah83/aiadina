@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SupportSection extends StatefulWidget {
@@ -9,7 +10,7 @@ class SupportSection extends StatefulWidget {
 
   const SupportSection({
     Key? key,
-    this.supportNumber = '+20 1021441861',
+    this.supportNumber = '01021441861',
   }) : super(key: key);
 
   @override
@@ -25,7 +26,6 @@ class _SupportSectionState extends State<SupportSection> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 800),
@@ -49,32 +49,49 @@ class _SupportSectionState extends State<SupportSection> with SingleTickerProvid
   }
 
   Future<void> whatsapp({required String contact, String text = ''}) async {
-  final String formattedContact = contact.startsWith('+') ? contact : '+2$contact';
-  final String androidUrl = "whatsapp://send?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
-  final String iosUrl = "https://wa.me/$formattedContact?text=${Uri.encodeComponent(text)}";
-  final String webUrl = "https://api.whatsapp.com/send/?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
+    print('whatsapp: original contact=$contact, text=$text');
 
-  try {
-    String url;
-    if (Platform.isIOS) {
-      url = iosUrl;
-    } else if (Platform.isAndroid) {
-      url = androidUrl;
-    } else {
-      url = webUrl;
+    if (contact.trim().isEmpty) {
+      print("Error: Phone number is missing.");
+      Get.snackbar(
+        'خطأ',
+        'رقم الهاتف غير متاح للتواصل عبر واتساب.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
     }
 
-    if (await canLaunch(url)) {
-      await launch(url);
+    String formattedContact;
+    if (contact.startsWith('0')) {
+      formattedContact = '+20${contact.substring(1)}';
+    } else if (contact.startsWith('+')) {
+      formattedContact = contact;
     } else {
+      formattedContact = '+20$contact';
+    }
+
+    final String androidUrl = "whatsapp://send?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
+    final String iosUrl = "https://wa.me/$formattedContact?text=${Uri.encodeComponent(text)}";
+    final String webUrl = "https://api.whatsapp.com/send/?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
+
+    try {
+      print('whatsapp: trying to launch url with formatted contact=$formattedContact');
+      String url = Platform.isIOS ? iosUrl : androidUrl;
+      if (await canLaunch(url)) {
+        print('whatsapp: launching url=$url');
+        await launch(url);
+      } else {
+        print('whatsapp: cannot launch url=$url, trying to launch web url');
+        await launch(webUrl);
+      }
+    } catch (e) {
+      print('Error launching WhatsApp URL: $e');
+      print('whatsapp: trying to launch web url');
       await launch(webUrl);
     }
-  } catch (e) {
-    print('Error launching WhatsApp URL: $e');
-    await launch(webUrl);
   }
-}
-
 
   @override
   Widget build(BuildContext context) {

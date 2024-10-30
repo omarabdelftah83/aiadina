@@ -27,7 +27,7 @@ class SellerPage extends StatefulWidget {
 class _SellerPageState extends State<SellerPage> {
   late UserController userController;
   Map<String, bool> isDeletingMap = {};
-
+ String? currentImagePath;
   @override
   void initState() {
     super.initState();
@@ -151,33 +151,6 @@ class _SellerPageState extends State<SellerPage> {
     }
   }
 
- Future<void> whatsapp({required String contact, String text = ''}) async {
-  final String formattedContact = contact.startsWith('+') ? contact : '+2$contact';
-  final String androidUrl = "whatsapp://send?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
-  final String iosUrl = "https://wa.me/$formattedContact?text=${Uri.encodeComponent(text)}";
-  final String webUrl = "https://api.whatsapp.com/send/?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
-
-  try {
-    String url;
-    if (Platform.isIOS) {
-      url = iosUrl;
-    } else if (Platform.isAndroid) {
-      url = androidUrl;
-    } else {
-      url = webUrl;
-    }
-
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      await launch(webUrl);
-    }
-  } catch (e) {
-    print('Error launching WhatsApp URL: $e');
-    await launch(webUrl);
-  }
-}
-
 
 
   void _showSnackBar(BuildContext context, String message) {
@@ -186,7 +159,7 @@ class _SellerPageState extends State<SellerPage> {
 
   @override
   Widget build(BuildContext context) {
-    String phoneNumber = userController.userResponse.value.data?.user?.phone ?? '';
+   
     return Scaffold(
       body: Obx(() {
         if (userController.isLoading.value) {
@@ -207,7 +180,9 @@ class _SellerPageState extends State<SellerPage> {
           if (user == null) {
             return const Center(child: Text('المستخدم غير موجود'));
           }
-
+           currentImagePath = user.profilePhoto; 
+          String? phoneNumber = user.phone;
+         
           return CustomPaddingApp(
             child: SingleChildScrollView(
               child: Column(
@@ -227,15 +202,24 @@ class _SellerPageState extends State<SellerPage> {
                         ],
                       ),
                       SizedBox(width: MediaQuery.of(context).size.width * 0.03),
-                      CircleAvatar(
-                        radius: MediaQuery.of(context).size.width * 0.07,
-                        backgroundImage: user.profilePhoto?.isNotEmpty == true
-                            ? NetworkImage(baseUrl + user.profilePhoto!)
-                            : null,
-                        child: user.profilePhoto?.isEmpty == true
-                            ? const Icon(Icons.person)
-                            : null,
-                      ),
+                  CircleAvatar(
+  radius: MediaQuery.of(context).size.width * 0.07,
+  backgroundColor: Colors.grey[200],
+  backgroundImage: (user.profilePhoto != null && user.profilePhoto!.isNotEmpty)
+      ? NetworkImage('${baseUrl}${user.profilePhoto!.trim()}') 
+      : null, 
+  child:
+       Icon(
+          Icons.person_3_rounded,
+          size: 40, 
+          color: AppColors.actionButton,
+        )
+  
+),
+
+
+
+
                       IconButton(
                         icon: const Icon(
                           Icons.arrow_forward_ios_outlined,
@@ -265,7 +249,7 @@ class _SellerPageState extends State<SellerPage> {
                       InkWell(
                         onTap: () {
                               if (phoneNumber != null) {
-                                whatsapp(contact: phoneNumber, text: ' اهلا بكم انا اتواصل معكم من تطبيق ايادينا ');
+                                whatsapp(contact: phoneNumber.toString(), text: ' اهلا بكم انا اتواصل معكم من تطبيق ايادينا ');
                               } else {
                                 _showSnackBar(context, "No phone number available");
                               }
@@ -329,4 +313,57 @@ class _SellerPageState extends State<SellerPage> {
       }),
     );
   }
+Future<void> whatsapp({required String contact, String text = ''}) async {
+  print('whatsapp: original contact=$contact, text=$text');
+
+  if (contact.trim().isEmpty) {
+    print("Error: Phone number is missing.");
+    Get.snackbar(
+      'خطأ',
+      'رقم الهاتف غير متاح للتواصل عبر واتساب.',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+    return; 
+  }
+
+  String formattedContact;
+  if (contact.startsWith('0')) {
+    formattedContact = '+20${contact.substring(1)}';
+  } else if (contact.startsWith('+')) {
+    formattedContact = contact; 
+  } else {
+    formattedContact = '+20$contact';
+  }
+
+  final String androidUrl = "whatsapp://send?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
+  final String iosUrl = "https://wa.me/$formattedContact?text=${Uri.encodeComponent(text)}";
+  final String webUrl = "https://api.whatsapp.com/send/?phone=$formattedContact&text=${Uri.encodeComponent(text)}";
+
+  try {
+    print('whatsapp: trying to launch url with formatted contact=$formattedContact');
+    String url;
+
+    if (Platform.isIOS) {
+      url = iosUrl;
+    } else if (Platform.isAndroid) {
+      url = androidUrl;
+    } else {
+      url = webUrl;
+    }
+    if (await canLaunch(url)) {
+      print('whatsapp: launching url=$url');
+      await launch(url);
+    } else {
+      print('whatsapp: cannot launch url=$url, trying to launch web url');
+      await launch(webUrl);
+    }
+  } catch (e) {
+    print('Error launching WhatsApp URL: $e');
+    print('whatsapp: trying to launch web url');
+    await launch(webUrl);
+  }
+}
+
 }
