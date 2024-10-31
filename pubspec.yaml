@@ -68,7 +68,7 @@ dependencies:
   timer_count_down: ^2.2.2
   url_launcher: ^6.3.0
   velocity_x: null
-
+  dio:
 dev_dependencies:
   change_app_package_name: ^1.4.0
   flutter_lints: ^3.0.0

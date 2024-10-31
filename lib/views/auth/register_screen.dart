@@ -87,11 +87,12 @@ class SignUP extends StatelessWidget {
                           dropdownValue: controller.cityController.text.isEmpty ? null : controller.cityController.text,
                           onDropdownChanged: (selectedCity) {
                             if (selectedCity != null) {
-                              controller.cityController.text = selectedCity; 
-                              controller.onCitySelected(selectedCity);
+                              controller.cityController.text = selectedCity;
+                              controller.fetchDistrictsForCity(selectedCity); // استدعاء الوظيفة هنا
                             }
                           },
                         ),
+
                         SizedBox(height: 20.h),
                         DropDownCustomTextfailed(
                           hintText: 'اختار الحي',
@@ -99,10 +100,11 @@ class SignUP extends StatelessWidget {
                           dropdownValue: controller.districtController.text.isEmpty ? null : controller.districtController.text,
                           onDropdownChanged: (selectedDistrict) {
                             if (selectedDistrict != null) {
-                              controller.districtController.text = selectedDistrict; 
+                              controller.districtController.text = selectedDistrict;
                             }
                           },
                         ),
+
                         // Password Fields
                         AuthTextFormField(
                           label: Strings.password,

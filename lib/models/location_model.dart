@@ -35,3 +35,31 @@ class CityDistrictModel {
 
 
 }
+
+class District {
+  final String district;
+
+  District({required this.district});
+
+  // Factory method to create an instance from JSON
+  factory District.fromJson(Map<String, dynamic> json) {
+    return District(
+      district: json['district'],
+    );
+  }
+
+}
+class CityRequest {
+  final String city;
+
+  CityRequest({required this.city});
+
+  Map<String, dynamic> toMap() {
+    final Map<String, dynamic> data = {};
+    if (city != null) {
+      data['city'] = city;  // تحويل القيم إلى نص
+    }
+
+    return data;
+  }
+}

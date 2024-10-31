@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ourhands/models/location_model.dart';
 import 'package:ourhands/models/user_model_register.dart';
 import 'package:ourhands/views/home/home_page.dart';
 import '../../services/get_all_locations.dart';
@@ -67,17 +68,35 @@ class RegisterController extends GetxController {
   }
 
   void onCitySelected(String city) {
-    cityController.text = city; 
-    updateDistrictsForCity(city);
+    print('City selected: $city'); // Debugging line
+    cityController.text = city;
+    fetchDistrictsForCity(city);
   }
 
-  void updateDistrictsForCity(String city) {
-    if (districtsMap[city] != null) {
-      districts.value = districtsMap[city]!; 
+  Future<void> fetchDistrictsForCity(String city) async {
+    isLoading.value = true;
+
+    // التأكد من أن المدينة ليست فارغة قبل إرسال الطلب
+    if (city.isEmpty) {
+      print('Error: City cannot be empty.');
+      districts.value = [];
+      isLoading.value = false;
+      return;
+    }
+
+    final cityRequest = CityRequest(city: city);
+    final response = await locationService.fetchDistricts(cityRequest); // تأكد من أن هذه القيمة غير فارغة
+    isLoading.value = false;
+
+    if (response != null) {
+      districts.value = response.map((district) => district.district).toList();
     } else {
       districts.value = [];
+      print('Error: No districts found for the selected city');
     }
   }
+
+
 
   Future<void> registerUser() async {
     if (!formKeyLogin.currentState!.validate()) return;
